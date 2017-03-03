@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Music Director using Multicast Ethernet
 # January 2016
 # Manuel Moreno
@@ -24,12 +25,12 @@ def build_can_frame(can_id, data):
     return struct.pack(can_frame_fmt, can_id, can_dlc, data)
 
 
-class Director():
-    ''' Fist version using multicast ethernet
-    '''
+class Director:
+    """ Fist version using multicast ethernet
+    """
 
-    def __init__(self, txtfile):
-        self.name = txtfile
+    def __init__(self, txt_file):
+        self.name = txt_file
         self.tracks = 8
         self.t = [[-1 for x in range(dim)] for x in range(self.tracks)]  # time
         self.n = [[-1 for x in range(dim)] for x in range(self.tracks)]  # note
@@ -56,10 +57,10 @@ class Director():
                     self.n[i][j] = int(data[1])
                     self.v[i][j] = int(data[2])
                     self.d[i][j] = float(data[3])
-                    if self.d[i][j] > 0 and self.d[i][j] < minim:
+                    if 0 < self.d[i][j] < minim:
                         minim = self.d[i][j]
                     self.takes_off[i][j] = self.t[i][j] + self.d[i][j]
-                    j = j + 1
+                    j += 1
 
         self.step = minim
 
@@ -97,24 +98,24 @@ class Director():
                     tx_msg[i] = 255  # note off
                     flag = True
 
-            if (flag == True):  # new event
+            if flag:  # new event
                 print(t, tx_msg[0], tx_msg[1], tx_msg[2], tx_msg[3], tx_msg[4], tx_msg[5], tx_msg[6], tx_msg[7])
                 sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
 
         sleep(self.step)  # step between notes
-        t = t + self.step
+        t += self.step
 
-    # Last Message to stop music
-    sleep(self.step)
-    for i in range(self.tracks):
-        tx_msg[i] = 255
-    sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
-    print("Play Over")
-    self.s.close()
+        # Last Message to stop music
+        sleep(self.step)
+        for i in range(self.tracks):
+            tx_msg[i] = 255
+        sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
+        print("Play Over")
+        self.s.close()
 
 
 if __name__ == '__main__':
-    dir1 = Director('BachConcerto')
+    dir1 = Director('sheets/BachConcerto')
     dir1.play()
     try:
         while True:
