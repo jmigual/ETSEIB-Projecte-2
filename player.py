@@ -1,37 +1,41 @@
 #!/usr/bin/env python3
-import threading
-import time
 import fluidsynth
+import time
 
-class PlayNote:
-    def __init__(self, begin, end, note, velocity):
-        self.begin = begin
-        self.end = end
-        self.note = note
-        self.velocity = velocity
 
-class MidiPlayer(threading.Thread):
+class MidiPlayer:
 
-    def __init__(self, **kwargs):
-        super(MidiPlayer, self).__init__(kwargs=kwargs)
-        self.notes = []
-        self.cLock = threading.Condition()
+    def __init__(self, sfid_path="/usr/share/sounds/sf2/FluidR3_GM.sf2"):
+        self.__playing_note = None
+        self.fs = fluidsynth.Synth()
+        self.fs.start()
+        sfid = self.fs.sfload(sfid_path)
+        self.fs.program_select(0, sfid, 0, 0)
 
-    def play(self, time, instrument, note, duration, velocity = 40):
-        """
-        Plays a note during a certain time
-        :param instrument: Instrument to be played
-        :param note: Note to be played according to midi notes
-        :param duration: Duration of the note to be played
-        :param velocity: Velocity of the note, is directly proportional to the note's volume
-        :return: None
-        """
-        self.cLock.acquire()
-        self.notes.append(PlayNote())
+    def play(self, note, velocity=40):
+        if note == 0:
+            return
+        if note == 255 and not self.__playing_note is None:
+            self.fs.noteoff(0, self.__playing_note)
+            self.__playing_note = None
+        else:
+            self.fs.noteon(0, note, velocity)
 
 
 def main():
-    print("Hello world")
+    player = MidiPlayer()
+    player.play(40)
+    time.sleep(1)
+    player.play(0)
+    time.sleep(0.2)
+    player.play(40)
+    time.sleep(1)
+    player.play(0)
+    time.sleep(0.2)
+    player.play(40)
+    time.sleep(1)
+    player.play(0)
+    time.sleep(0.2)
 
 if __name__ == "__main__":
     main()

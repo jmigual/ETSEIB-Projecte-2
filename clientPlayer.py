@@ -4,6 +4,9 @@ import socket
 import sys
 import struct
 import logging
+import getopt
+import fluidsynth
+import player
 
 can_frame_fmt = "=IB3x8s"
 multicast_group = '224.3.29.71'
@@ -15,7 +18,21 @@ def dissect_can_frame(frame):
     return can_id, can_dlc, data[:can_dlc]
 
 
+def usage():
+    print("clientPlayer -i number")
+    print("-t track number")
+
+
 def main():
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv, "")
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(1)
+
+    track = 0
+
     logging.basicConfig(filename="info.log", level=logging.DEBUG,
                         format="[%(asctime)s] (%(levelname)s) %(message)s")
 
@@ -33,6 +50,9 @@ def main():
         data, address = sock.recvfrom(1024)
         canidenrx, dlcrx, rx_msg = dissect_can_frame(data)
         logging.debug("Received {0} bytes from {1}", (len(data), address))
+        note = rx_msg[track]
+        logging.debug("Playing note: {0}".format(note))
+        play_note(note)
 
 
 if __name__ == "__main__":
