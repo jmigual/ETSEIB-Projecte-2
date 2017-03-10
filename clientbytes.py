@@ -37,8 +37,8 @@ while True:
     print(ord(rx_msg[0]), ord(rx_msg[1]), ord(rx_msg[2]), ord(rx_msg[3]), ord(rx_msg[4]), ord(rx_msg[5]),
           ord(rx_msg[6]), ord(rx_msg[7]))
 
-    # print >>sys.stderr, 'received %s bytes from %s' % (len(data), address)
-    # print >>sys.stderr, data
+    print >>sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print >>sys.stderr, data
 
-    # print >>sys.stderr, 'sending acknowledgement to', address
-    # sock.sendto('ack', address)
+    print >>sys.stderr, 'sending acknowledgement to', address
+    sock.sendto('ack', address)

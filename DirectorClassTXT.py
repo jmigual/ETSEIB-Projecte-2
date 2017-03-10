@@ -102,8 +102,8 @@ class Director:
                 print(t, tx_msg[0], tx_msg[1], tx_msg[2], tx_msg[3], tx_msg[4], tx_msg[5], tx_msg[6], tx_msg[7])
                 sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
 
-        sleep(self.step)  # step between notes
-        t += self.step
+            sleep(self.step)  # step between notes
+            t += self.step
 
         # Last Message to stop music
         sleep(self.step)
@@ -122,4 +122,3 @@ if __name__ == '__main__':
             pass
     except KeyboardInterrupt:
         print("End of execution")
-
