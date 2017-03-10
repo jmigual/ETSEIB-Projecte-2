@@ -36,6 +36,8 @@ lib = find_library('fluidsynth') or \
 
 if lib is None:
     raise ImportError("Couldn't find the FluidSynth library.")
+else:
+    print(lib)
 
 # Dynamically link the FluidSynth library
 _fl = CDLL(lib)
@@ -256,18 +258,18 @@ class Synth:
 
         """
         st = new_fluid_settings()
-        fluid_settings_setnum(st, 'synth.gain', gain)
-        fluid_settings_setnum(st, 'synth.sample-rate', samplerate)
+        fluid_settings_setnum(st, b'gain', 1)#gain)
+        fluid_settings_setnum(st, b'synth.sample-rate', samplerate)
         # We limit the polyphony to 128 for safety purposes
-        fluid_settings_setint(st, "synth.polyphony", polyphony)
+        fluid_settings_setint(st, b"synth.polyphony", polyphony)
         # No reason to limit ourselves to 16 channels
-        fluid_settings_setint(st, 'synth.midi-channels', channels)
+        fluid_settings_setint(st, b'synth.midi-channels', channels)
         self.settings = st
         self.synth = new_fluid_synth(self.settings)
         self.audio_driver = None
         self.midi_driver = None
 
-    def start(self, audiodriver='alsa'):
+    def start(self, audiodriver=b'alsa'):
         """Start audio output driver in separate background thread
 
         Call this function any time after creating the Synth object.
@@ -287,9 +289,9 @@ class Synth:
 
         """
         if audiodriver is not None:
-            assert (audiodriver in ['alsa', 'oss', 'jack', 'portaudio',
-                                    'sndmgr', 'coreaudio', 'Direct Sound', 'pulseaudio'])
-            fluid_settings_setstr(self.settings, 'audio.driver', audiodriver)
+            assert (audiodriver in [b'alsa', b'oss', b'jack', b'portaudio',
+                                    b'sndmgr', b'coreaudio', b'Direct Sound', b'pulseaudio'])
+            fluid_settings_setstr(self.settings, b'audio.driver', audiodriver)
         self.audio_driver = new_fluid_audio_driver(self.settings, self.synth)
 
     def delete(self):
@@ -459,7 +461,7 @@ class Synth:
 
         return instruments
 
-    def start_midi(self, mididriver='alsa_seq'):
+    def start_midi(self, mididriver=b'alsa_seq'):
         """
         Starts the MIDI driver to allow the MIDI keyboard interaction.
         :param mididriver: name of the midi driver, that can be one of these:
@@ -468,11 +470,11 @@ class Synth:
         :return:
         """
         if mididriver is not None:
-            assert (mididriver in ['alsa_raw', 'alsa_seq', 'coremidi', 'jack',
-                                   'midishare', 'oss', 'winmidi'])
-            fluid_settings_setstr(self.settings, 'midi.driver', mididriver)
+            assert (mididriver in [b'alsa_raw', b'alsa_seq', b'coremidi', b'jack',
+                                   b'midishare', b'oss', b'winmidi'])
+            fluid_settings_setstr(self.settings, b'midi.driver', mididriver)
             # Optionally: sets the real time priority to 99.
-            fluid_settings_setnum(self.settings, 'midi.realtimeprio', 99)
+            fluid_settings_setnum(self.settings, b'midi.realtimeprio', 99)
         self.midi_driver = new_fluid_midi_driver(self.settings, fluid_synth_handle_midi_event, self.synth)
         return self.midi_driver
 
