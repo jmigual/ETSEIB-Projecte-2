@@ -1,2 +1,6 @@
 .idea/
 tests/
+bin/
+include/
+lib/
+pip-selfcheck.json
