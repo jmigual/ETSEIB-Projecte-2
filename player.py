@@ -7,10 +7,10 @@ class MidiPlayer:
 
     def __init__(self, sfid_path="/usr/share/sounds/sf2/FluidR3_GM.sf2"):
         self.__playing_note = None
-        self.sfid_path = sfid_path
+        self.sfid_path = sfid_path.encode("ascii")
         self.fs = fluidsynth.Synth()
         self.fs.start()
-        sfid = self.fs.sfload(sfid_path)
+        sfid = self.fs.sfload(self.sfid_path)
         self.fs.program_select(0, sfid, 0, 0)
 
     def play(self, note, velocity=40):

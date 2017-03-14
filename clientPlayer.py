@@ -5,12 +5,26 @@ import sys
 import struct
 import logging
 import getopt
-import fluidsynth
 import player
+
+
+def get_default_logger():
+    log = logging.getLogger()
+    log.setLevel(logging.INFO)
+    formatter = logging.Formatter("[%(asctime)s] (%(levelname)s) %(message)s")
+    handler_s = logging.StreamHandler()
+    handler_f = logging.FileHandler("info.log")
+    handler_s.setFormatter(formatter)
+    handler_f.setFormatter(formatter)
+    log.addHandler(handler_s)
+    log.addHandler(handler_f)
+    return log
+
 
 can_frame_fmt = "=IB3x8s"
 multicast_group = '224.3.29.71'
 server_address = ('', 10000)
+logger = get_default_logger()
 
 
 def dissect_can_frame(frame):
@@ -25,21 +39,8 @@ def usage():
     print("-d set debug mode")
 
 
-def get_default_logger():
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    formater = logging.Formatter("[%(asctime)s] (%(levelname)s) %(message)s")
-    handler_s = logging.StreamHandler()
-    handler_f = logging.FileHandler("info.log")
-    handler_s.setFormatter(formater)
-    handler_f.setFormatter(formater)
-    logger.addHandler(handler_s)
-    logger.addHandler(handler_f)
-    return logger
-
-
 def main():
-    logger = get_default_logger()
+    global logger
 
     try:
         opts, args = getopt.gnu_getopt(sys.argv, "")
@@ -63,26 +64,29 @@ def main():
             logger.error("Unknown option {0}", o)
 
     midi_player = player.MidiPlayer()
-    logging.info("Loading MidiPlayer with SF2 {0}".format(midi_player.sfid_path))
+    logger.info("Loading MidiPlayer with SF2 {0}".format(midi_player.sfid_path))
 
     # Create a socket and bind it to the server address
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(server_address)
-    logging.info("Started socket at {0}".format(server_address))
+    logger.info("Started socket at {0}".format(server_address))
 
     group = socket.inet_aton(multicast_group)
     mreq = struct.pack('4sL', group, socket.INADDR_ANY)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    logging.info("Begin listening at multicast {0}".format(multicast_group))
+    logger.info("Begin listening at multicast {0}".format(multicast_group))
 
     while True:
         data, address = sock.recvfrom(1024)
         canidenrx, dlcrx, rx_msg = dissect_can_frame(data)
-        logging.debug("Received {0} bytes from {1}", (len(data), address))
+        logger.debug("Received {0} bytes from {1}", (len(data), address))
         note = rx_msg[track]
-        logging.debug("Playing note: {0}".format(note))
+        logger.debug("Playing note: {0}".format(note))
         midi_player.play(note, velocity)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.info("Shutting down thanks for the ride")
