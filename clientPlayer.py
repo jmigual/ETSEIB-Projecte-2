@@ -49,9 +49,21 @@ def main():
         sys.exit(1)
 
     track = 0
+    velocity = 40
 
-    logging.basicConfig(filename="info.log", level=logging.DEBUG,
-                        format="[%(asctime)s] (%(levelname)s) %(message)s")
+    for o, a in opts:
+        if o == "-i":
+            track = int(a)
+        elif o == "v":
+            velocity = int(a)
+        elif o == "d":
+            logger.setLevel(logging.DEBUG)
+            logger.debug("Starting debug mode")
+        else:
+            logger.error("Unknown option {0}", o)
+
+    midi_player = player.MidiPlayer()
+    logging.info("Loading MidiPlayer with SF2 {0}".format(midi_player.sfid_path))
 
     # Create a socket and bind it to the server address
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -69,7 +81,7 @@ def main():
         logging.debug("Received {0} bytes from {1}", (len(data), address))
         note = rx_msg[track]
         logging.debug("Playing note: {0}".format(note))
-        play_note(note)
+        midi_player.play(note, velocity)
 
 
 if __name__ == "__main__":
