@@ -76,10 +76,14 @@ def main():
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     logger.info("Begin listening at multicast {0}".format(multicast_group))
 
+    # This is where all the magic happens
     while True:
+        # Blocks until data is received
         data, address = sock.recvfrom(1024)
         canidenrx, dlcrx, rx_msg = dissect_can_frame(data)
         logger.debug("Received {0} bytes from {1}", (len(data), address))
+
+        # Get the note form the data and play it
         note = rx_msg[track]
         logger.debug("Playing note: {0}".format(note))
         midi_player.play(note, velocity)
