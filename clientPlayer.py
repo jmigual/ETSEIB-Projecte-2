@@ -19,11 +19,28 @@ def dissect_can_frame(frame):
 
 
 def usage():
-    print("clientPlayer -i number")
-    print("-t track number")
+    print("clientPlayer -i number [-v number]")
+    print("-i track number")
+    print("-v volume")
+    print("-d set debug mode")
+
+
+def get_default_logger():
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    formater = logging.Formatter("[%(asctime)s] (%(levelname)s) %(message)s")
+    handler_s = logging.StreamHandler()
+    handler_f = logging.FileHandler("info.log")
+    handler_s.setFormatter(formater)
+    handler_f.setFormatter(formater)
+    logger.addHandler(handler_s)
+    logger.addHandler(handler_f)
+    return logger
 
 
 def main():
+    logger = get_default_logger()
+
     try:
         opts, args = getopt.gnu_getopt(sys.argv, "")
     except getopt.GetoptError as err:
