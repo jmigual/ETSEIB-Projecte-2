@@ -31,3 +31,8 @@ Un fitxer amb L línies que tenen el format següent: `(t, msg0, ,msg1, ... , ms
 - Analitzada API director
 - Analitzada comunicació amb sockets
 - Començada reproducció en el client
+
+### 2017/03/17
+
+- Feta defensa 1
+- Creada i debuguejada una nova versió del client (clientPlayer.py) que rep i reprodueix les notes (part de reproducció només funciona a l'ordinador i no a la raspberry)
