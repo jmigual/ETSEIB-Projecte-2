@@ -40,15 +40,15 @@ class SocketPlayer:
         # Blocks until data is received
         data, address = self.sock.recvfrom(1024)
         canidenrx, dlcrx, rx_msg = SocketPlayer.dissect_can_frame(data)
-        self.logger.debug("Received {0} bytes from {1}", (len(data), address))
+        self.logger.debug("Received %s bytes from %s", len(data), address[0])
 
         # Get the note form the data and play it
         note = rx_msg[self.track]
-        self.logger.debug("Playing note: {0}".format(note))
+        self.logger.info("Playing note: %s", note)
         self.midi_player.play(note, self.velocity)
 
-        self.logger.debug("Sending acknowledgment to {}", address)
-        self.sock.sendto('ack', address)
+        self.logger.debug("Sending acknowledgment to %s", address)
+        self.sock.sendto(b'ack', address)
 
     @staticmethod
     def dissect_can_frame(frame):
@@ -69,7 +69,7 @@ class MidiPlayer:
     def play(self, note, velocity=40):
         if note == 0:
             return
-        if note == 255 and not self.__playing_note is None:
+        if note == 255 and self.__playing_note is not None:
             self.fs.noteoff(0, self.__playing_note)
             self.__playing_note = None
         else:

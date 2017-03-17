@@ -18,7 +18,7 @@ def main():
     logger = logging.getLogger()
 
     try:
-        opts, args = getopt.gnu_getopt(sys.argv, "")
+        opts, args = getopt.gnu_getopt(sys.argv, "idv")
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -30,9 +30,9 @@ def main():
     for o, a in opts:
         if o == "-i":
             track = int(a)
-        elif o == "v":
+        elif o == "-v":
             velocity = int(a)
-        elif o == "d":
+        elif o == "-d":
             logger.setLevel(logging.DEBUG)
             logger.debug("Starting debug mode")
         else:
