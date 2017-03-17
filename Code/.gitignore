@@ -1,0 +1,10 @@
+tests/
+bin/
+include/
+lib/
+__pycache__/
+virtualenv/
+
+pip-selfcheck.json
+info.log
+*.pyc

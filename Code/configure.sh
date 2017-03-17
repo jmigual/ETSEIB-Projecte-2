@@ -24,10 +24,10 @@ if [ ${all} = true ]; then
 
     echo Installing virtual environment
     pip3 install virtualenv
-    virtualenv .
+    virtualenv ./virtualenv
 fi
 
-source bin/activate
+source virtualenv/bin/activate
 
 echo ========================================================
 echo To finish the virtualenv installation you need to execute

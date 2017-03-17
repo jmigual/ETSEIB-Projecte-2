@@ -1,10 +1,2 @@
 .idea/
-tests/
-bin/
-include/
-lib/
-__pycache__/
 
-pip-selfcheck.json
-info.log
-*.pyc
