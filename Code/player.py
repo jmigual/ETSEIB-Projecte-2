@@ -19,13 +19,14 @@ class SocketPlayer:
 
         self.midi_player = MidiPlayer()
         self.logger.info("Loading MidiPlayer with SF2 {0}".format(self.midi_player.sfid_path))
+        self.sock = None
 
+    def run(self):
         # Create a socket and bind it to the server address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(SocketPlayer.server_address)
         self.logger.info("Started socket at {0}".format(SocketPlayer.server_address))
 
-    def run(self):
         group = socket.inet_aton(SocketPlayer.multicast_group)
         mreq = struct.pack('4sL', group, socket.INADDR_ANY)
         self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
@@ -45,6 +46,9 @@ class SocketPlayer:
         note = rx_msg[self.track]
         self.logger.debug("Playing note: {0}".format(note))
         self.midi_player.play(note, self.velocity)
+
+        self.logger.debug("Sending acknowledgment to {}", address)
+        self.sock.sendto('ack', address)
 
     @staticmethod
     def dissect_can_frame(frame):
