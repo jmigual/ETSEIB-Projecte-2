@@ -15,6 +15,12 @@ class SocketPlayer:
     def __init__(self, velocity, track):
         self.logger = logging.getLogger()
         self.velocity = velocity
+
+        # Convert to list if it's not
+        try:
+            iter(track)
+        except TypeError:
+            track = [track]
         self.track = track
 
         self.midi_player = MidiPlayer()
@@ -43,9 +49,9 @@ class SocketPlayer:
         self.logger.debug("Received %s bytes from %s", len(data), address[0])
 
         # Get the note form the data and play it
-        note = rx_msg[self.track]
-        self.logger.info("Playing note: %s", note)
-        self.midi_player.play(note, self.velocity)
+        for note in [rx_msg[i] for i in self.track]:
+            self.logger.info("Playing note: %s", note)
+            self.midi_player.play(note, self.velocity)
 
         self.logger.debug("Sending acknowledgment to %s", address)
         self.sock.sendto(b'ack', address)
