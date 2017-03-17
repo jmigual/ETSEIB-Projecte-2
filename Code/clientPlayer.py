@@ -8,7 +8,7 @@ import getopt
 import player
 
 
-def get_default_logger():
+def set_default_logger():
     log = logging.getLogger()
     log.setLevel(logging.INFO)
     formatter = logging.Formatter("[%(asctime)s] (%(levelname)s) %(message)s")
@@ -18,13 +18,11 @@ def get_default_logger():
     handler_f.setFormatter(formatter)
     log.addHandler(handler_s)
     log.addHandler(handler_f)
-    return log
 
 
 can_frame_fmt = "=IB3x8s"
 multicast_group = '224.3.29.71'
 server_address = ('', 10000)
-logger = get_default_logger()
 
 
 def dissect_can_frame(frame):
@@ -40,7 +38,7 @@ def usage():
 
 
 def main():
-    global logger
+    logger = logging.getLogger()
 
     try:
         opts, args = getopt.gnu_getopt(sys.argv, "")
@@ -90,7 +88,8 @@ def main():
 
 
 if __name__ == "__main__":
+    set_default_logger()
     try:
         main()
     except KeyboardInterrupt:
-        logger.info("Shutting down thanks for the ride")
+        logging.getLogger().info("Shutting down, Thanks for the ride!")
