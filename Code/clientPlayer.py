@@ -30,7 +30,6 @@ def main():
     for o, a in opts:
         if o == "-t":
             track = [int(x) for x in a.split(",")]
-            print(track)
         elif o == "-v":
             velocity = int(a)
         elif o == "-d":
@@ -38,6 +37,8 @@ def main():
             logger.debug("Starting debug mode")
         else:
             logger.error("Unknown option {0}", o)
+
+    logger.info("Playing tracks: " + ",".join(map(str, track)))
 
     # Start playing
     sock_player = player.SocketPlayer(track=track, velocity=velocity)
