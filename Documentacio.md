@@ -36,3 +36,8 @@ Un fitxer amb L línies que tenen el format següent: `(t, msg0, ,msg1, ... , ms
 
 - Feta defensa 1
 - Creada i debuguejada una nova versió del client (clientPlayer.py) que rep i reprodueix les notes (part de reproducció només funciona a l'ordinador i no a la raspberry)
+
+
+### 2017/03/24
+
+- Treballant en la reproducció de música a la raspberry. Problemes amb els drivers i la reprdoducció del fluidsynth.py. Todo: instal·lar pixel a la raspberry.
