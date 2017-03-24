@@ -85,15 +85,15 @@ class MidiPlayer:
 def main():
     player = MidiPlayer()
     player.play(40)
-    time.sleep(1)
+    time.sleep(.8)
     player.play(0)
     time.sleep(0.2)
     player.play(40)
-    time.sleep(1)
+    time.sleep(.8)
     player.play(0)
     time.sleep(0.2)
     player.play(40)
-    time.sleep(1)
+    time.sleep(.8)
     player.play(0)
     time.sleep(0.2)
 
