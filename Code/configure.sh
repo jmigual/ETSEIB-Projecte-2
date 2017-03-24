@@ -20,7 +20,7 @@ done
 
 if [ ${all} = true ]; then
     echo Installing fluidsynth
-    sudo apt install fluidsynth -y
+    sudo apt install python3 fluidsynth jackd alsa-tools alsa-util -y
 
     echo Installing virtual environment
     pip3 install virtualenv
