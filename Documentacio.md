@@ -41,3 +41,10 @@ Un fitxer amb L línies que tenen el format següent: `(t, msg0, ,msg1, ... , ms
 ### 2017/03/24
 
 - Treballant en la reproducció de música a la raspberry. Problemes amb els drivers i la reprdoducció del fluidsynth.py. Todo: instal·lar pixel a la raspberry.
+
+
+### 2017/03/31
+
+- Instal·lat pixel a la raspberry pi i solucionat el problema amb la reproducció de so a la raspberry. *Ja funciona!* Ara només faltaria tenir més raspberries, amb targetes SD i altaveus i ja tindríem una orquestra.
+- Creat el bot de Telegram.
+- Modularització de la classe director.
