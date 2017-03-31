@@ -8,8 +8,8 @@ from logger import *
 
 
 def usage():
-    print("clientPlayer -i number [-v number]")
-    print("-i track number")
+    print("clientPlayer -t number [-v number]")
+    print("-t track number")
     print("-v volume")
     print("-d set debug mode")
 
@@ -18,7 +18,7 @@ def main():
     logger = logging.getLogger()
 
     try:
-        opts, args = getopt.gnu_getopt(sys.argv, "idv")
+        opts, args = getopt.gnu_getopt(sys.argv, "t:dv")
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -28,8 +28,8 @@ def main():
     velocity = 40
 
     for o, a in opts:
-        if o == "-i":
-            track = int(a)
+        if o == "-t":
+            track = [int(x) for x in a.split(",")]
         elif o == "-v":
             velocity = int(a)
         elif o == "-d":
@@ -37,6 +37,8 @@ def main():
             logger.debug("Starting debug mode")
         else:
             logger.error("Unknown option {0}", o)
+
+    logger.info("Playing tracks: " + ",".join(map(str, track)))
 
     # Start playing
     sock_player = player.SocketPlayer(track=track, velocity=velocity)

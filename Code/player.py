@@ -72,7 +72,7 @@ class MidiPlayer:
         sfid = self.fs.sfload(self.sfid_path)
         self.fs.program_select(0, sfid, 0, 0)
 
-    def play(self, note, velocity=40):
+    def play(self, note, velocity=127):
         if note == 0:
             return
         if note == 255 and self.__playing_note is not None:
@@ -85,15 +85,15 @@ class MidiPlayer:
 def main():
     player = MidiPlayer()
     player.play(40)
-    time.sleep(1)
+    time.sleep(.8)
     player.play(0)
     time.sleep(0.2)
     player.play(40)
-    time.sleep(1)
+    time.sleep(.8)
     player.play(0)
     time.sleep(0.2)
     player.play(40)
-    time.sleep(1)
+    time.sleep(.8)
     player.play(0)
     time.sleep(0.2)
 
