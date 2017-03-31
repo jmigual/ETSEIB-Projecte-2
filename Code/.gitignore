@@ -8,3 +8,4 @@ virtualenv/
 pip-selfcheck.json
 info.log
 *.pyc
+*.key
