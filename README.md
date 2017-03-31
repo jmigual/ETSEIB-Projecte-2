@@ -1,5 +1,6 @@
 # Projecte 2 ETSEIB
-## Realització d'una orquestra amb Raspberry PI
+
+ealització d'una orquestra amb Raspberry PI
 
 ## Configuració de l'entorn
 
