@@ -3,11 +3,10 @@
 # January 2016
 # Manuel Moreno
 
-from ctypes import *
 from time import *
 import socket
 import struct
-import sys
+from logger import *
 
 # 8 music voices
 # message = identifier, length of data, 8 notes (one per instrument)
@@ -25,6 +24,26 @@ def build_can_frame(can_id, data):
     return struct.pack(can_frame_fmt, can_id, can_dlc, data)
 
 
+class PlayNote:
+    def __init__(self, time_start=-1, pitch=-1, velocity=-1, duration=-1, takes_off=-1):
+        self.time = time_start
+        self.pitch = pitch
+        self.velocity = velocity
+        self.duration = duration
+        self.takes_off = takes_off
+
+    def __eq__(self, other):
+        print(other.time, other.takes_off, self.time, self.takes_off)
+        return self.time == other.time or self.takes_off == other.takes_off
+
+    def get_pitch(self, time_now):
+        if time_now == self.time:
+            return self.pitch
+        elif time_now == self.takes_off:
+            return 255
+        return 0
+
+
 class Director:
     """ Fist version using multicast ethernet
     """
@@ -32,38 +51,33 @@ class Director:
     def __init__(self, txt_file):
         self.name = txt_file
         self.tracks = 8
-        self.t = [[-1 for x in range(dim)] for x in range(self.tracks)]  # time
-        self.n = [[-1 for x in range(dim)] for x in range(self.tracks)]  # note
-        self.v = [[-1 for x in range(dim)] for x in range(self.tracks)]  # velocity
-        self.d = [[-1 for x in range(dim)] for x in range(self.tracks)]  # duration
-        self.takes_off = [[-1 for x in range(dim)] for x in range(self.tracks)]  # off
+        self.notes = [[]]*self.tracks
 
         minim = 100
         maxim = 0
-        for i in range(self.tracks):
-            j = 0
-            with open(self.name + str(i) + '.txt') as f:
+        for track in range(self.tracks):
+            with open(self.name + str(track) + '.txt') as f:
                 for line in f:
                     data = line.split()
+                    note = PlayNote()
                     try:
-                        self.t[i][j] = float(data[0])
+                        note.time = float(data[0])
                     except Exception as e:
                         print(e)
                         print(data)
-                        print(i, j)
-                        print(self.name + str(i) + '.txt')
-                    if self.t[i][j] > maxim:
-                        maxim = self.t[i][j]
-                    self.n[i][j] = int(data[1])
-                    self.v[i][j] = int(data[2])
-                    self.d[i][j] = float(data[3])
-                    if 0 < self.d[i][j] < minim:
-                        minim = self.d[i][j]
-                    self.takes_off[i][j] = self.t[i][j] + self.d[i][j]
-                    j += 1
+                        print(track, len(self.notes[track]))
+                        print(self.name + str(track) + '.txt')
+                    if note.time > maxim:
+                        maxim = note.time
+                    note.pitch = int(data[1])
+                    note.velocity = int(data[2])
+                    note.duration = float(data[3])
+                    if 0 < note.duration < minim:
+                        minim = note.duration
+                    note.takes_off = note.time + note.duration
+                    self.notes[track].append(note)
 
         self.step = minim
-
         self.t_end = maxim
         print(self.t_end)
         print(self.step)
@@ -89,17 +103,18 @@ class Director:
         print("Playing...")
         while t < self.t_end:
             flag = False
-            for i in range(self.tracks):
-                tx_msg[i] = 0
-                if t in self.t[i]:  # note on
-                    tx_msg[i] = self.n[i][self.t[i].index(t)]
-                    flag = True
-                if t in self.takes_off[i] and tx_msg[i] == 0:
-                    tx_msg[i] = 255  # note off
-                    flag = True
+            time_note = PlayNote(time_start=t, takes_off=t)
+            for track in range(self.tracks):
+                tx_msg[track] = 0
+                note_index = self.notes[track].index(time_note)
+                note = self.notes[track][note_index]
+
+                tx_msg[track] = note.get_pitch(t)
+                flag |= tx_msg[track] != 0
 
             if flag:  # new event
-                print(t, tx_msg[0], tx_msg[1], tx_msg[2], tx_msg[3], tx_msg[4], tx_msg[5], tx_msg[6], tx_msg[7])
+                print(t, tx_msg[0], tx_msg[1], tx_msg[2], tx_msg[3], tx_msg[4], tx_msg[5],
+                      tx_msg[6], tx_msg[7])
                 sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
 
             sleep(self.step)  # step between notes
@@ -107,8 +122,8 @@ class Director:
 
         # Last Message to stop music
         sleep(self.step)
-        for i in range(self.tracks):
-            tx_msg[i] = 255
+        for track in range(self.tracks):
+            tx_msg[track] = 255
         sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
         print("Play Over")
         self.s.close()
