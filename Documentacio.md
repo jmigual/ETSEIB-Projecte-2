@@ -5,6 +5,7 @@
 2. En la primera terminal, connectar-se amb SSH a la raspberry pi: `ssh pi@10.5.3.128` i executar la comanda `vncserver`. Després ens desplacem al directori on hi ha clonat el repositori, fem `cd Code` i `python3 clientPlayer.py -t tracks_a_reproduir_en_aquest_dispositiu` (per exemple, per reproduir els tracks 3 i 4 farem `python3 clientPlayer.py -t 3,4`
 3. En la segona terminal, obrir una connexió gràfica amb la raspberry pi: `xtightvncviewer 10.5.3.128:1`. Un cop allà canviar el sistema d'output d'audio (control dret a l'icona d'audio de dalt a la dreta i seleccionar "C-Media USB Headphone Set", suposant que utilitzem la tarjeta d'audio. Ja podem tancar la connexió gràfica i la terminal.
 4. En el tercer terminal, ens desplacem al directori on hi ha clonat el repositori, fem `cd Code` i `python3 director.py`.
+
 Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 i 3 en noves terminals canviant la IP.
 
 
