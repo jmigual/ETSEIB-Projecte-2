@@ -6,6 +6,7 @@
 from time import *
 import socket
 import struct
+import bisect
 from logger import *
 
 # 8 music voices
@@ -26,12 +27,12 @@ def build_can_frame(can_id, data):
 
 class PlayNote:
     def __init__(self, time_start=-1., pitch=-1, velocity=-1, duration=-1.):
-        self.time = time_start
         self.pitch = pitch
         self.velocity = velocity
         self.duration = duration
+        self.time = time_start
         self.time_start = time_start
-        self.takes_off = time_start + duration
+        self.time_off = time_start + duration
 
     def __eq__(self, other):
         return self.time == other.time
@@ -42,13 +43,14 @@ class PlayNote:
     def __gt__(self, other):
         return self.time > other.time
 
-    def get_pitch(self, time_now):
-        if time_now == self.time:
-            return self.pitch
-        elif time_now == self.takes_off:
-            return 255
-        return 0
+    def __str__(self):
+        return "From: " + str(self.time_start) + " To: " + str(self.time_off) + " Note: " + str(self.pitch)
 
+    def to_off(self):
+        """ Change the sorting value to the time_off
+        """
+        self.time = self.time_off
+    __repr__ = __str__
 
 class Director:
     """ Fist version using multicast ethernet
@@ -57,8 +59,8 @@ class Director:
     def __init__(self, txt_file):
         self.name = txt_file
         self.tracks = 8
-        self.notes = [[]]*self.tracks
-        self.notes_playing = [[]]*self.tracks
+        self.notes = [[] for i in range(self.tracks)]
+        self.notes_playing = [[] for i in range(self.tracks)]
 
         minim = 100
         maxim = 0
@@ -77,7 +79,9 @@ class Director:
                         maxim = note.time
                     if 0. < note.duration < minim:
                         minim = note.duration
+                    #print("Note:",note)
                     self.notes[track].append(note)
+                #self.notes[track].sort()
 
         self.step = minim
         self.t_end = maxim
@@ -96,6 +100,7 @@ class Director:
         # local network segment.
         ttl = struct.pack('b', 1)
         self.s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
+        #print(str(self.notes[0]).replace(",", "\n"))
 
     def play(self):
         tx_msg = bytearray(8)
@@ -105,13 +110,22 @@ class Director:
         print("Playing...")
         while t < self.t_end:
             flag = False
-            time_note = PlayNote(time_start=t, takes_off=t)
             for track in range(self.tracks):
                 tx_msg[track] = 0
-                note_index = self.notes[track].index(time_note)
-                note = self.notes[track][note_index]
+                if self.notes[track] and self.notes[track][0].time_start <= t:
+                    # Send the note
+                    note = self.notes[track].pop(0)
+                    tx_msg[track] = note.pitch
 
-                tx_msg[track] = note.get_pitch(t)
+                    # Remove the note and add it to the playing notes
+                    note.to_off()
+                    bisect.insort_left(self.notes_playing[track], note)
+
+                if self.notes_playing[track] and self.notes_playing[track][0].time_off <= t:
+                    # Stop playing the note
+                    self.notes_playing[track].pop(0)
+                    tx_msg[track] = 255
+
                 flag |= tx_msg[track] != 0
 
             if flag:  # new event
