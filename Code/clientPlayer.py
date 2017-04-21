@@ -24,7 +24,7 @@ def main():
         usage()
         sys.exit(1)
 
-    track = 0
+    track = [0]
     velocity = 40
 
     for o, a in opts:
