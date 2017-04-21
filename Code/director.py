@@ -25,16 +25,22 @@ def build_can_frame(can_id, data):
 
 
 class PlayNote:
-    def __init__(self, time_start=-1, pitch=-1, velocity=-1, duration=-1, takes_off=-1):
+    def __init__(self, time_start=-1., pitch=-1, velocity=-1, duration=-1.):
         self.time = time_start
         self.pitch = pitch
         self.velocity = velocity
         self.duration = duration
-        self.takes_off = takes_off
+        self.time_start = time_start
+        self.takes_off = time_start + duration
 
     def __eq__(self, other):
-        print(other.time, other.takes_off, self.time, self.takes_off)
-        return self.time == other.time or self.takes_off == other.takes_off
+        return self.time == other.time
+
+    def __lt__(self, other):
+        return self.time < other.time
+
+    def __gt__(self, other):
+        return self.time > other.time
 
     def get_pitch(self, time_now):
         if time_now == self.time:
@@ -52,6 +58,7 @@ class Director:
         self.name = txt_file
         self.tracks = 8
         self.notes = [[]]*self.tracks
+        self.notes_playing = [[]]*self.tracks
 
         minim = 100
         maxim = 0
@@ -59,9 +66,8 @@ class Director:
             with open(self.name + str(track) + '.txt') as f:
                 for line in f:
                     data = line.split()
-                    note = PlayNote()
                     try:
-                        note.time = float(data[0])
+                        note = PlayNote(float(data[0]), int(data[1]), int(data[2]), float(data[3]))
                     except Exception as e:
                         print(e)
                         print(data)
@@ -69,12 +75,8 @@ class Director:
                         print(self.name + str(track) + '.txt')
                     if note.time > maxim:
                         maxim = note.time
-                    note.pitch = int(data[1])
-                    note.velocity = int(data[2])
-                    note.duration = float(data[3])
-                    if 0 < note.duration < minim:
+                    if 0. < note.duration < minim:
                         minim = note.duration
-                    note.takes_off = note.time + note.duration
                     self.notes[track].append(note)
 
         self.step = minim
