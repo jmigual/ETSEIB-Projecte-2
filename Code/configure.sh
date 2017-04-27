@@ -19,9 +19,8 @@ while getopts ":a" o; do
     esac
 done
 
-if [ ${all} = true ]; then
+if ${all}; then
     echo Installing fluidsynth and necessary tools
-    sudo apt install python3 fluidsynth tightvncserver alsa-tools alsa-util -y
-
+    sudo apt install python3 fluidsynth tightvncserver alsa-tools -y
 fi
 
