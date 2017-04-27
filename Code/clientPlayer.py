@@ -18,7 +18,7 @@ def main():
     logger = logging.getLogger()
 
     try:
-        opts, args = getopt.gnu_getopt(sys.argv, "t:dv")
+        opts, args = getopt.gnu_getopt(sys.argv, "t:dv:")
     except getopt.GetoptError as err:
         print(err)
         usage()
