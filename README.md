@@ -10,3 +10,10 @@ Per configurar l'entorn cal anar a la carpeta `Code` i executar la següent coma
 sudo ./configure.sh
 ```
 
+## Instalació a una raspberry pi
+
+Per instal·lar-lo a una raspberry només cal usar la següent comanda:
+
+```bash
+curl -sSL https://github.com/jmigual/projecte2/raw/master/install.sh | bash
+```
