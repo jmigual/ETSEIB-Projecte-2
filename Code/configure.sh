@@ -23,13 +23,5 @@ if [ ${all} = true ]; then
     echo Installing fluidsynth and necessary tools
     sudo apt install python3 fluidsynth tightvncserver alsa-tools alsa-util -y
 
-    echo Installing virtual environment
-    sudo pip3 install virtualenv
 fi
 
-source virtualenv/bin/activate
-
-echo ========================================================
-echo To finish the virtualenv installation you need to execute
-echo source bin/activate
-echo ========================================================
