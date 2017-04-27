@@ -5,11 +5,12 @@ usage() {
 	echo "-a  Configure all (virtualenv and python packages)"
 }
 
-all=false
+packages="python3 fluidsynth alsa-tools"
+
 while getopts ":a" o; do
     case "${o}" in
         a)
-            all=true
+            packages=${packages} tightvncserver
             ;;
         *)
             echo "Unknown option: ${OPTARG}"
@@ -19,8 +20,6 @@ while getopts ":a" o; do
     esac
 done
 
-if ${all}; then
-    echo Installing fluidsynth and necessary tools
-    sudo apt install python3 fluidsynth tightvncserver alsa-tools -y
-fi
+echo Installing fluidsynth and necessary tools
+sudo apt install ${packages} -y
 
