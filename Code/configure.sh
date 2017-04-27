@@ -24,7 +24,7 @@ if [ ${all} = true ]; then
     sudo apt install python3 fluidsynth tightvncserver alsa-tools alsa-util -y
 
     echo Installing virtual environment
-    pip3 install virtualenv
+    sudo pip3 install virtualenv
 fi
 
 source virtualenv/bin/activate
