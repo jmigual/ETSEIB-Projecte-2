@@ -121,7 +121,7 @@ class Director:
                     note.to_off()
                     bisect.insort_left(self.notes_playing[track], note)
 
-                if self.notes_playing[track] and self.notes_playing[track][0].time_off <= t:
+                if self.notes_playing[track] and self.notes_playing[track][0].time_off <= t and tx_msg[track] == 0:
                     # Stop playing the note
                     self.notes_playing[track].pop(0)
                     tx_msg[track] = 255
