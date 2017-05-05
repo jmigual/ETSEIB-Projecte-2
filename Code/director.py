@@ -7,6 +7,8 @@ from time import *
 import socket
 import struct
 import bisect
+import itertools
+import json
 from logger import *
 
 # 8 music voices
@@ -44,13 +46,11 @@ class PlayNote:
         return self.time > other.time
 
     def __str__(self):
-        return "From: " + str(self.time_start) + " To: " + str(self.time_off) + " Note: " + str(self.pitch)
+        return "From: " + str(self.time_start) + " To: " + str(self.time_off) + " Note: " + str(
+            self.pitch)
 
-    def to_off(self):
-        """ Change the sorting value to the time_off
-        """
-        self.time = self.time_off
     __repr__ = __str__
+
 
 class Director:
     """ Fist version using multicast ethernet
@@ -79,9 +79,9 @@ class Director:
                         maxim = note.time
                     if 0. < note.duration < minim:
                         minim = note.duration
-                    #print("Note:",note)
+                    # print("Note:",note)
                     self.notes[track].append(note)
-                #self.notes[track].sort()
+                    # self.notes[track].sort()
 
         self.step = minim
         self.t_end = maxim
@@ -100,47 +100,61 @@ class Director:
         # local network segment.
         ttl = struct.pack('b', 1)
         self.s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
-        #print(str(self.notes[0]).replace(",", "\n"))
+        # print(str(self.notes[0]).replace(",", "\n"))
 
     def play(self):
-        tx_msg = bytearray(8)
         canid = 0x100
-        dlc = self.tracks
         t = 0
         print("Playing...")
         while t < self.t_end:
+            msg_out = {}
+            msg_in = {}
             flag = False
             for track in range(self.tracks):
-                tx_msg[track] = 0
-                if self.notes[track] and self.notes[track][0].time_start <= t:
-                    # Send the note
-                    note = self.notes[track].pop(0)
-                    tx_msg[track] = note.pitch
+                if self.notes[track]:
+                    notes = list(
+                        itertools.takewhile(lambda x: x.time_start <= t, self.notes[track]))
+                    self.notes[track] = list(itertools.dropwhile(lambda x: x.time_start <= t,
+                                                                 self.notes[track]))
+                    notes_in = [x.pitch for x in notes]
+                    if notes_in:
+                        msg_in[track] = notes_in
+                        flag |= True
 
                     # Remove the note and add it to the playing notes
-                    note.to_off()
-                    bisect.insort_left(self.notes_playing[track], note)
+                    for note in notes:
+                        bisect.insort_left(self.notes_playing[track], note)
 
-                if self.notes_playing[track] and self.notes_playing[track][0].time_off <= t and tx_msg[track] == 0:
-                    # Stop playing the note
-                    self.notes_playing[track].pop(0)
-                    tx_msg[track] = 255
+                if self.notes_playing[track]:
+                    out_notes = list(itertools.takewhile(lambda x: x.time_off <= t,
+                                                         self.notes_playing[track]))
 
-                flag |= tx_msg[track] != 0
+                    self.notes_playing[track] = list(itertools.dropwhile(lambda x: x.time_off <= t,
+                                                                         self.notes_playing[track]))
+                    out_notes = list(map(lambda x: x.pitch, out_notes))
+                    if out_notes:
+                        msg_out[track] = out_notes
+                        flag |= True
 
             if flag:  # new event
-                print(t, tx_msg[0], tx_msg[1], tx_msg[2], tx_msg[3], tx_msg[4], tx_msg[5],
-                      tx_msg[6], tx_msg[7])
-                sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
-
+                json_string = json.dumps({
+                    "in": msg_in,
+                    "out": msg_out,
+                    "tracks": self.tracks
+                })
+                print("t:", t, "data:", json_string)
+                sent = self.s.sendto(json_string.encode(), self.multicast_group)
             sleep(self.step)  # step between notes
             t += self.step
 
         # Last Message to stop music
         sleep(self.step)
-        for track in range(self.tracks):
-            tx_msg[track] = 255
-        sent = self.s.sendto(build_can_frame(canid, tx_msg), self.multicast_group)
+        json_string = json.dumps({
+            "in": {},
+            "out": list(range(self.tracks)),
+            "tracks": self.tracks
+        })
+        sent = self.s.sendto(json_string.encode(), self.multicast_group)
         print("Play Over")
         self.s.close()
 
