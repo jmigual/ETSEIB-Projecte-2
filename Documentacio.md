@@ -46,6 +46,15 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 - Instruccions d'ús
 - ...
 
+### 2017/04/28
+
+- Feta defensa 2: primera prova amb més d'un altaveu amb èxit :D
+
+### 2017/05/05
+
+- Creació d'un script per canviar l'output per defecte d'audio per tal de poder reproduir la música per la tarjeta de so USB.
+- Definició protocol de comunicació director -- músic amb format JSON.
+
 
 ## APIs
 
