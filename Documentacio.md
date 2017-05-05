@@ -65,7 +65,7 @@ Un fitxer amb L línies que consten de quatre nombres cada una: `t n v d `.
 - `v` és la velocitat (volum)
 - `d` és la durada (en segons). Totes les durades `d` han de ser múltiples del mínim entre 100 i la `d` més petita.
 
-### Output del director i input del client (reproductor)
+### Output del director i input del client/músic (obsolet)
 Un fitxer amb L línies que tenen el format següent: `(t, msg0, ,msg1, ... , msg7)`
 - `t` és el temps en segons
 - `msgx` és el misstage del track número `x`. Aquest missatge pot ser:
