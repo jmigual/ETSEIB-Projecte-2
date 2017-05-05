@@ -3,6 +3,7 @@ import fluidsynth
 import socket
 import struct
 import time
+import json
 
 from logger import *
 
@@ -12,7 +13,13 @@ class SocketPlayer:
     multicast_group = '224.3.29.71'
     server_address = ('', 10000)
 
-    def __init__(self, velocity, track):
+    def __init__(self, velocity, track, sfid_path="/usr/share/sounds/sf2/FluidR3_GM.sf2"):
+        self.sfid_path = sfid_path.encode("ascii")
+        self.fs = fluidsynth.Synth()
+        self.fs.start()
+        sfid = self.fs.sfload(self.sfid_path)
+        self.fs.program_select(0, sfid, 0, 0)
+
         self.logger = logging.getLogger()
         self.velocity = velocity
 
@@ -45,10 +52,11 @@ class SocketPlayer:
     def __wait_and_proces(self):
         # Blocks until data is received
         data, address = self.sock.recvfrom(1024)
-        canidenrx, dlcrx, rx_msg = SocketPlayer.dissect_can_frame(data)
+        tracks, notes_in, notes_out = SocketPlayer.dissect_can_frame(data)
         self.logger.debug("Received %s bytes from %s", len(data), address[0])
 
         # Get the note form the data and play it
+        # M'HE QUEDAT AQUI!!! NO FUNCIONA
         for note in [rx_msg[i] for i in self.track]:
             self.logger.info("Playing note: %s", note)
             self.midi_player.play(note, self.velocity)
@@ -58,19 +66,22 @@ class SocketPlayer:
 
     @staticmethod
     def dissect_can_frame(frame):
-        can_id, can_dlc, data = struct.unpack(SocketPlayer.can_frame_fmt, frame)
-        return can_id, can_dlc, data[:can_dlc]
+        msg = json.loads(frame.decode())
+        return msg["tracks"], msg["in"], msg["out"]
 
 
 class MidiPlayer:
 
-    def __init__(self, sfid_path="/usr/share/sounds/sf2/FluidR3_GM.sf2"):
+    def __init__(self, ):
         self.__playing_note = None
         self.sfid_path = sfid_path.encode("ascii")
         self.fs = fluidsynth.Synth()
         self.fs.start()
         sfid = self.fs.sfload(self.sfid_path)
         self.fs.program_select(0, sfid, 0, 0)
+
+    def note_on(self, note, velocity=127):
+        self.fs.
 
     def play(self, note, velocity=127):
         if note == 0:
