@@ -66,6 +66,13 @@ Un fitxer amb L línies que tenen el format següent: `(t, msg0, ,msg1, ... , ms
   
 ### Comunicació en JSON
 
+En aquest nou protocol les dades s'envien de la següent manera,
+hi ha les variables `in`, `out` i `tracks`. Que contenen
+
+ - `in`: Objecte amb `numero_canal` i `notes_entren`.
+ - `out`: Objecte amb `numero_canal` i `notes_paren`.
+ - `tracks`: Nombre de pistes que hi ha en total
+
 ```JSON
 {
   "in": {
