@@ -63,3 +63,19 @@ Un fitxer amb L línies que tenen el format següent: `(t, msg0, ,msg1, ... , ms
   - `0`. No passa res en aquell track
   - `255`. Note off
   - Altrament: nota en midi a reproduir
+  
+### Comunicació en JSON
+
+```JSON
+{
+  "in": {
+    "1": [1, 2, 3],
+    "3": [4, 5, 6]
+  },
+  "out": {
+    "1": [4, 5],
+    "2": [1, 2]
+  },
+  "tracks": 8
+}
+```
