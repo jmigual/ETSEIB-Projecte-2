@@ -146,6 +146,8 @@ class Director:
 
 
 if __name__ == '__main__':
+    set_default_logger("director.log")
+
     dir1 = Director('sheets/BachConcerto')
     dir1.play()
     try:

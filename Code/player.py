@@ -98,4 +98,5 @@ def main():
     time.sleep(0.2)
 
 if __name__ == "__main__":
+    set_default_logger("player_test.log")
     main()
