@@ -6,6 +6,6 @@ __pycache__/
 virtualenv/
 
 pip-selfcheck.json
-info.log
+*.log
 *.pyc
 *.key

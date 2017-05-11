@@ -46,6 +46,7 @@ def main():
 
 
 if __name__ == "__main__":
+    set_default_logger("player.log")
     try:
         main()
     except KeyboardInterrupt:
