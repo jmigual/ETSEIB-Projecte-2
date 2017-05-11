@@ -2,7 +2,6 @@
 import fluidsynth
 import socket
 import struct
-import time
 import json
 
 from logger import *
@@ -17,8 +16,7 @@ class SocketPlayer:
         self.sfid_path = sfid_path.encode("ascii")
         self.fs = fluidsynth.Synth()
         self.fs.start()
-        sfid = self.fs.sfload(self.sfid_path)
-        self.fs.program_select(0, sfid, 0, 0)
+        self.fs.program_select(0, self.fs.sfload(self.sfid_path), 0, 0)
 
         self.logger = logging.getLogger()
         self.velocity = velocity
@@ -28,10 +26,9 @@ class SocketPlayer:
             iter(track)
         except TypeError:
             track = [track]
-        self.track = track
+        self.tracks = track
 
-        self.midi_player = MidiPlayer()
-        self.logger.info("Loading MidiPlayer with SF2 {0}".format(self.midi_player.sfid_path))
+        self.logger.info("Loading Player with SF2 {0}".format(self.sfid_path))
         self.sock = None
 
     def run(self):
@@ -47,67 +44,30 @@ class SocketPlayer:
 
         # This is where all the magic happens
         while True:
-            self.__wait_and_proces()
+            self.__wait_and_process()
 
-    def __wait_and_proces(self):
+    def __wait_and_process(self):
         # Blocks until data is received
         data, address = self.sock.recvfrom(1024)
-        tracks, notes_in, notes_out = SocketPlayer.dissect_can_frame(data)
+        tracks, notes_in_all, notes_out_all = SocketPlayer.dissect_frame(data)
         self.logger.debug("Received %s bytes from %s", len(data), address[0])
 
         # Get the note form the data and play it
-        # M'HE QUEDAT AQUI!!! NO FUNCIONA
-        for note in [rx_msg[i] for i in self.track]:
-            self.logger.info("Playing note: %s", note)
-            self.midi_player.play(note, self.velocity)
+        for track in self.tracks:
+            notes_in = notes_in_all.get(str(track), [])
+            for note in notes_in:
+                self.logger.info("Playing note: %s", note)
+                self.fs.noteon(0, note, self.velocity)
+
+            notes_out = notes_out_all.get(str(track), [])
+            for note in notes_out:
+                self.logger.debug("Stopping note: %s", note)
+                self.fs.noteoff(0, note)
 
         self.logger.debug("Sending acknowledgment to %s", address)
         self.sock.sendto(b'ack', address)
 
     @staticmethod
-    def dissect_can_frame(frame):
+    def dissect_frame(frame):
         msg = json.loads(frame.decode())
         return msg["tracks"], msg["in"], msg["out"]
-
-
-class MidiPlayer:
-
-    def __init__(self, ):
-        self.__playing_note = None
-        self.sfid_path = sfid_path.encode("ascii")
-        self.fs = fluidsynth.Synth()
-        self.fs.start()
-        sfid = self.fs.sfload(self.sfid_path)
-        self.fs.program_select(0, sfid, 0, 0)
-
-    def note_on(self, note, velocity=127):
-        self.fs.
-
-    def play(self, note, velocity=127):
-        if note == 0:
-            return
-        if note == 255 and self.__playing_note is not None:
-            self.fs.noteoff(0, self.__playing_note)
-            self.__playing_note = None
-        else:
-            self.fs.noteon(0, note, velocity)
-
-
-def main():
-    player = MidiPlayer()
-    player.play(40)
-    time.sleep(.8)
-    player.play(0)
-    time.sleep(0.2)
-    player.play(40)
-    time.sleep(.8)
-    player.play(0)
-    time.sleep(0.2)
-    player.play(40)
-    time.sleep(.8)
-    player.play(0)
-    time.sleep(0.2)
-
-if __name__ == "__main__":
-    set_default_logger("player_test.log")
-    main()
