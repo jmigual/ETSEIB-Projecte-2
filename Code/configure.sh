@@ -8,7 +8,7 @@ usage() {
 packages="python3 fluidsynth alsa-tools"
 
 pip_packs="mido"
-pip="pip install --user ${pip_packs}"
+pip="pip3 install --user ${pip_packs}"
 
 while getopts ":ap" o; do
     case "${o}" in
