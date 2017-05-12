@@ -7,10 +7,19 @@ usage() {
 
 packages="python3 fluidsynth alsa-tools"
 
-while getopts ":a" o; do
+pip_packs="music21"
+pip="pip install --user ${pip_packs}"
+
+while getopts ":ap" o; do
     case "${o}" in
         a)
             packages=${packages} tightvncserver
+            ;;
+        p)
+            echo Installing the following python packages
+            echo ${pip_packs}
+            ${pip}
+            exit
             ;;
         *)
             echo "Unknown option: ${OPTARG}"
