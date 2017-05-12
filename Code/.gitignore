@@ -2,6 +2,7 @@ tests/
 bin/
 include/
 lib/
+tmp/
 __pycache__/
 virtualenv/
 

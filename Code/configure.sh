@@ -7,7 +7,7 @@ usage() {
 
 packages="python3 fluidsynth alsa-tools"
 
-pip_packs="music21"
+pip_packs="mido"
 pip="pip install --user ${pip_packs}"
 
 while getopts ":ap" o; do
@@ -31,4 +31,5 @@ done
 
 echo Installing fluidsynth and necessary tools
 sudo apt install ${packages} -y
+${pip}
 
