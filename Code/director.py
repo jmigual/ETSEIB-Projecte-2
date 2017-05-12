@@ -56,9 +56,9 @@ class Director:
     """ Fist version using multicast ethernet
     """
 
-    def __init__(self, txt_file):
+    def __init__(self, txt_file, tracks=8):
         self.name = txt_file
-        self.tracks = 8
+        self.tracks = tracks
         self.notes = [[] for i in range(self.tracks)]
         self.notes_playing = [[] for i in range(self.tracks)]
 
@@ -103,7 +103,6 @@ class Director:
         # print(str(self.notes[0]).replace(",", "\n"))
 
     def play(self):
-        canid = 0x100
         t = 0
         print("Playing...")
         while t < self.t_end:
