@@ -1,47 +1,29 @@
 #!/usr/bin/env python3
 
-import getopt
-import sys
+import argparse
 
 import player
 from logger import *
 
 
-def usage():
-    print("clientPlayer -t number [-v number]")
-    print("-t track number")
-    print("-v volume")
-    print("-d set debug mode")
-
-
 def main():
     logger = logging.getLogger()
 
-    try:
-        opts, args = getopt.gnu_getopt(sys.argv, "t:dv:")
-    except getopt.GetoptError as err:
-        print(err)
-        usage()
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Play some music with network orchestra")
+    parser.add_argument("-t", "--tracks", default=[0], nargs="+", type=int, metavar="t",
+                        help="Tracks to be played by this player")
+    parser.add_argument("-v", "--velocity", default=127, type=int, metavar="v",
+                        help="Velocity (volume) to use when playing")
+    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug mode logging")
+    args = parser.parse_args()
 
-    track = [0]
-    velocity = 40
-
-    for o, a in opts:
-        if o == "-t":
-            track = [int(x) for x in a.split(",")]
-        elif o == "-v":
-            velocity = int(a)
-        elif o == "-d":
-            logger.setLevel(logging.DEBUG)
-            logger.debug("Starting debug mode")
-        else:
-            logger.error("Unknown option {0}", o)
-
-    logger.info("Playing tracks: " + ",".join(map(str, track)))
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+        logger.debug("Starting in DEBUG mode")
+    logger.info("Playing tracks: " + ",".join(map(str, args.tracks)))
 
     # Start playing
-    sock_player = player.SocketPlayer(track=track, velocity=velocity)
+    sock_player = player.SocketPlayer(track=args.tracks, velocity=args.velocity)
     sock_player.run()
 
 
