@@ -141,7 +141,7 @@ class Director:
                     "out": msg_out,
                     "tracks": self.tracks
                 })
-                print("t:", t, "data:", json_string)
+                logging.debug("t:", t, "data:", json_string)
                 sent = self.s.sendto(json_string.encode(), self.multicast_group)
             sleep(self.step)  # step between notes
             t += self.step
@@ -153,8 +153,8 @@ class Director:
             "out": list(range(self.tracks)),
             "tracks": self.tracks
         })
-        sent = self.s.sendto(json_string.encode(), self.multicast_group)
-        print("Play Over")
+        self.s.sendto(json_string.encode(), self.multicast_group)
+        logging.info("Play Over")
         self.s.close()
 
 
