@@ -55,6 +55,11 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 - Creació d'un script per canviar l'output per defecte d'audio per tal de poder reproduir la música per la tarjeta de so USB.
 - Definició protocol de comunicació director -- músic amb format JSON.
 
+### 2017/05/12
+
+- Primera versió del bot de Telegram: enviament d'imatges.
+- Implementat el protocol de comunicació amb JSON.
+- Troballa de llibreria que passa e MIDI a JSON. Es deixaran d'usar els fitxers txt de les pistes.
 
 ## APIs
 
