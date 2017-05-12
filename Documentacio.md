@@ -59,7 +59,7 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 
 - Primera versió del bot de Telegram: enviament d'imatges.
 - Implementat el protocol de comunicació amb JSON.
-- Troballa de llibreria que passa e MIDI a JSON. Es deixaran d'usar els fitxers txt de les pistes.
+- Troballa de llibreria que passa de MIDI a JSON. Es deixaran d'usar els fitxers `txt` de les pistes.
 
 ## APIs
 
