@@ -1,5 +1,6 @@
 import time
 import mido
+from logger import *
 
 
 # The default tempo is 120 BPM.

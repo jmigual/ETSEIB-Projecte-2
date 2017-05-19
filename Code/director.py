@@ -6,6 +6,7 @@
 import socket
 import struct
 import json
+import argparse
 from DirectorMidiFile import *
 from logger import *
 
@@ -54,11 +55,7 @@ class Director:
     """ Fist version using multicast ethernet
     """
 
-    def __init__(self, txt_file, tracks=8):
-        self.name = txt_file
-        self.mid = DirectorMidiFile(self.name)
-        self.tracks = len(self.mid.tracks)
-
+    def __init__(self, tracks=8):
         # create a raw socket
         print("Init Multicast socket")
         self.multicast_group = ('224.0.0.1', 10000)
@@ -73,6 +70,12 @@ class Director:
         self.s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
         # print(str(self.notes[0]).replace(",", "\n"))
 
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
+        if key == "file_name":
+            self.mid = DirectorMidiFile(self.file_name)
+            self.tracks = len(self.mid.tracks)
+
     def play(self):
         t = 0
         logging.info("Playing...")
@@ -82,9 +85,9 @@ class Director:
             msg_in = {}
 
             if msg.type == 'note_on':
-                msg_in[track] = msg.note
+                msg_in[track] = [msg.note]
             elif msg.type == 'note_off':
-                msg_out[track] = msg.note
+                msg_out[track] = [msg.note]
             else:
                 continue
 
@@ -93,7 +96,7 @@ class Director:
                 "out": msg_out,
                 "tracks": self.tracks
             })
-            logging.debug("t:", t, "data:", json_string)
+            logging.debug("data_sent:" + json_string)
             sent = self.s.sendto(json_string.encode(), self.multicast_group)
 
         json_string = json.dumps({
@@ -106,13 +109,24 @@ class Director:
         self.s.close()
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Start director to play music with Pi Orchestra")
+    parser.add_argument("-d", "--debug", action="store_true", help="Print debug information")
+    args = parser.parse_args()
+
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Starting in DEBUG mode")
+
+    dir1 = Director()
+    dir1.file_name = "sheets/Mario.mid"
+    dir1.play()
+
+
 if __name__ == '__main__':
     set_default_logger("director.log")
 
-    dir1 = Director('sheets/Mario.mid')
-    dir1.play()
     try:
-        while True:
-            pass
+        main()
     except KeyboardInterrupt:
-        print("End of execution")
+        logging.info("Shutting down Director, Thanks for the ride!")
