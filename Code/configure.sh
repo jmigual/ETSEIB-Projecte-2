@@ -2,7 +2,7 @@
 
 usage() {
 	echo "Usage: $0 [-a|-p]"
-	echo "-a  Configure all (virtualenv and python packages)"
+	echo "-a  Configure all (python packages)"
 }
 
 packages="python3 fluidsynth alsa-tools"
