@@ -61,6 +61,13 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 - Implementat el protocol de comunicació amb JSON.
 - Troballa de llibreria que passa de MIDI a JSON. Es deixaran d'usar els fitxers `txt` de les pistes.
 
+### 2017/05/19
+
+- El bot ja es baixa arxius midi.
+- Reproducció de midi també funciona (falta optimitzar).
+- Pel proper dia, falta ajuntar els dos punts anteriors i ja ho tindrem.
+- Comença la redacció de la memòria.
+
 ## APIs
 
 ### Input del director
