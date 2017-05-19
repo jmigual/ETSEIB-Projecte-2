@@ -25,11 +25,14 @@ def build_can_frame(can_id, data):
     data = data.ljust(8, b'\x00')
     return struct.pack(can_frame_fmt, can_id, can_dlc, data)
 
+
 class Director:
     """ Fist version using multicast ethernet
     """
 
-    def __init__(self, tracks=8):
+    def __init__(self):
+        self.file_name = None
+
         # create a raw socket
         print("Init Multicast socket")
         self.multicast_group = ('224.0.0.1', 10000)
@@ -51,7 +54,6 @@ class Director:
             self.tracks = len(self.mid.tracks)
 
     def play(self):
-        t = 0
         logging.info("Playing...")
 
         for msg, track in self.mid.play_tracks():
