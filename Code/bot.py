@@ -17,6 +17,7 @@ bot.
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram.file import File
 import logging
+import urllib.request as req
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -37,7 +38,23 @@ def help(bot, update):
 
 def echo(bot, update):
     update.message.reply_text(update.message.text)
-    #if update.message. ==
+    print(update.message.text)
+
+
+def get_document(bot, update):
+    doc = update.message.document
+    if doc.mime_type != "audio/midi" and doc.mime_type != "audio/x-midi":
+        update.message.reply_text("Els meus músics només poden tocar música en MIDI! Els fitxers " + doc.mime_type  +
+                                  " no sé com s'han d'interpretar i m'acabo tornant boig!")
+        return
+    f = bot.getFile(doc.file_id)
+    tmp_file = req.urlretrieve(f.file_path)
+    play_midi(tmp_file[0])
+    update.message.reply_text("Ara tocaré la peça " + doc.file_name)
+
+
+def play_midi(file_path):
+    print("Stub: play file " + file_path)
 
 
 def error(bot, update, error):
@@ -57,6 +74,7 @@ def main():
 
     # on non-command i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
+    dp.add_handler(MessageHandler(Filters.document, get_document))
 
     # log all errors
     dp.add_error_handler(error)
