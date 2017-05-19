@@ -16,13 +16,43 @@ def to_abstime(messages, i):
         yield msg.copy(time=now), i
 
 
+def to_reltime(messages):
+    """Convert messages to relative time."""
+    now = 0
+    for msg, track in messages:
+        delta = msg.time - now
+        yield msg.copy(time=delta), track
+        now = msg.time
+
+
+def fix_end_of_track(messages):
+    """Remove all end_of_track messages and add one at the end.
+    This is used by merge_tracks() and MidiFile.save()."""
+    # Accumulated delta time from removed end of track messages.
+    # This is added to the next message.
+    accum = 0
+
+    for msg, track in messages:
+        if msg.type == 'end_of_track':
+            accum += msg.time
+        else:
+            if accum:
+                delta = accum + msg.time
+                yield msg.copy(time=delta), track
+                accum = 0
+            else:
+                yield msg, track
+
+    yield mido.MetaMessage('end_of_track', time=accum), 0
+
+
 def merge_tracks(tracks):
     messages = []
     for i, track in enumerate(tracks):
         messages.extend(to_abstime(track, i))
 
     messages.sort(key=lambda x: x[0].time)
-    return messages
+    return mido.MidiTrack(fix_end_of_track(to_reltime(messages)))
 
 
 class DirectorMidiFile(mido.MidiFile):
