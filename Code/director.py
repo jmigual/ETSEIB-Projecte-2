@@ -55,25 +55,32 @@ class Director:
 
     def play(self):
         logging.info("Playing...")
+        msg_out = {}
+        msg_in = {}
 
         for msg, track in self.mid.play_tracks():
-            msg_out = {}
-            msg_in = {}
+            if msg.time > 0:
+                json_string = json.dumps({
+                    "in": msg_in,
+                    "out": msg_out,
+                    "tracks": self.tracks
+                })
+                logging.debug("data_sent:" + json_string)
+                sent = self.s.sendto(json_string.encode(), self.multicast_group)
+
+                msg_out = {}
+                msg_in = {}
 
             if msg.type == 'note_on':
-                msg_in[track] = [msg.note]
+                messages = msg_in.get(track, [])
+                messages.append(msg.note)
+                msg_in[track] = messages
             elif msg.type == 'note_off':
-                msg_out[track] = [msg.note]
+                messages = msg_out.get(track, [])
+                messages.append(msg.note)
+                msg_out[track] = messages
             else:
                 continue
-
-            json_string = json.dumps({
-                "in": msg_in,
-                "out": msg_out,
-                "tracks": self.tracks
-            })
-            logging.debug("data_sent:" + json_string)
-            sent = self.s.sendto(json_string.encode(), self.multicast_group)
 
         json_string = json.dumps({
             "in": {},
