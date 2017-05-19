@@ -25,32 +25,6 @@ def build_can_frame(can_id, data):
     data = data.ljust(8, b'\x00')
     return struct.pack(can_frame_fmt, can_id, can_dlc, data)
 
-
-class PlayNote:
-    def __init__(self, time_start=-1., pitch=-1, velocity=-1, duration=-1.):
-        self.pitch = pitch
-        self.velocity = velocity
-        self.duration = duration
-        self.time = time_start
-        self.time_start = time_start
-        self.time_off = time_start + duration
-
-    def __eq__(self, other):
-        return self.time == other.time
-
-    def __lt__(self, other):
-        return self.time < other.time
-
-    def __gt__(self, other):
-        return self.time > other.time
-
-    def __str__(self):
-        return "From: " + str(self.time_start) + " To: " + str(self.time_off) + " Note: " + str(
-            self.pitch)
-
-    __repr__ = __str__
-
-
 class Director:
     """ Fist version using multicast ethernet
     """
