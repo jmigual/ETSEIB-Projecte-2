@@ -3,12 +3,11 @@
 # January 2016
 # Manuel Moreno
 
-from time import *
 import socket
 import struct
-import bisect
-import itertools
 import json
+import argparse
+from DirectorMidiFile import *
 from logger import *
 
 # 8 music voices
@@ -27,66 +26,12 @@ def build_can_frame(can_id, data):
     return struct.pack(can_frame_fmt, can_id, can_dlc, data)
 
 
-class PlayNote:
-    def __init__(self, time_start=-1., pitch=-1, velocity=-1, duration=-1.):
-        self.pitch = pitch
-        self.velocity = velocity
-        self.duration = duration
-        self.time = time_start
-        self.time_start = time_start
-        self.time_off = time_start + duration
-
-    def __eq__(self, other):
-        return self.time == other.time
-
-    def __lt__(self, other):
-        return self.time < other.time
-
-    def __gt__(self, other):
-        return self.time > other.time
-
-    def __str__(self):
-        return "From: " + str(self.time_start) + " To: " + str(self.time_off) + " Note: " + str(
-            self.pitch)
-
-    __repr__ = __str__
-
-
 class Director:
     """ Fist version using multicast ethernet
     """
 
-    def __init__(self, txt_file):
-        self.name = txt_file
-        self.tracks = 8
-        self.notes = [[] for i in range(self.tracks)]
-        self.notes_playing = [[] for i in range(self.tracks)]
-
-        minim = 100
-        maxim = 0
-        for track in range(self.tracks):
-            with open(self.name + str(track) + '.txt') as f:
-                for line in f:
-                    data = line.split()
-                    try:
-                        note = PlayNote(float(data[0]), int(data[1]), int(data[2]), float(data[3]))
-                    except Exception as e:
-                        print(e)
-                        print(data)
-                        print(track, len(self.notes[track]))
-                        print(self.name + str(track) + '.txt')
-                    if note.time > maxim:
-                        maxim = note.time
-                    if 0. < note.duration < minim:
-                        minim = note.duration
-                    # print("Note:",note)
-                    self.notes[track].append(note)
-                    # self.notes[track].sort()
-
-        self.step = minim
-        self.t_end = maxim
-        print(self.t_end)
-        print(self.step)
+    def __init__(self):
+        self.file_name = None
 
         # create a raw socket
         print("Init Multicast socket")
@@ -102,70 +47,69 @@ class Director:
         self.s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
         # print(str(self.notes[0]).replace(",", "\n"))
 
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
+        if key == "file_name":
+            self.mid = DirectorMidiFile(self.file_name)
+            self.tracks = len(self.mid.tracks)
+
     def play(self):
-        canid = 0x100
-        t = 0
-        print("Playing...")
-        while t < self.t_end:
-            msg_out = {}
-            msg_in = {}
-            flag = False
-            for track in range(self.tracks):
-                if self.notes[track]:
-                    notes = list(
-                        itertools.takewhile(lambda x: x.time_start <= t, self.notes[track]))
-                    self.notes[track] = list(itertools.dropwhile(lambda x: x.time_start <= t,
-                                                                 self.notes[track]))
-                    notes_in = [x.pitch for x in notes]
-                    if notes_in:
-                        msg_in[track] = notes_in
-                        flag |= True
+        logging.info("Playing...")
+        msg_out = {}
+        msg_in = {}
 
-                    # Remove the note and add it to the playing notes
-                    for note in notes:
-                        bisect.insort_left(self.notes_playing[track], note)
-
-                if self.notes_playing[track]:
-                    out_notes = list(itertools.takewhile(lambda x: x.time_off <= t,
-                                                         self.notes_playing[track]))
-
-                    self.notes_playing[track] = list(itertools.dropwhile(lambda x: x.time_off <= t,
-                                                                         self.notes_playing[track]))
-                    out_notes = list(map(lambda x: x.pitch, out_notes))
-                    if out_notes:
-                        msg_out[track] = out_notes
-                        flag |= True
-
-            if flag:  # new event
+        for msg, track in self.mid.play_tracks():
+            if msg.time > 0:
                 json_string = json.dumps({
                     "in": msg_in,
                     "out": msg_out,
                     "tracks": self.tracks
                 })
-                print("t:", t, "data:", json_string)
+                logging.debug("data_sent:" + json_string)
                 sent = self.s.sendto(json_string.encode(), self.multicast_group)
-            sleep(self.step)  # step between notes
-            t += self.step
 
-        # Last Message to stop music
-        sleep(self.step)
+                msg_out = {}
+                msg_in = {}
+
+            if msg.type == 'note_on':
+                messages = msg_in.get(track, [])
+                messages.append(msg.note)
+                msg_in[track] = messages
+            elif msg.type == 'note_off':
+                messages = msg_out.get(track, [])
+                messages.append(msg.note)
+                msg_out[track] = messages
+            else:
+                continue
+
         json_string = json.dumps({
             "in": {},
             "out": list(range(self.tracks)),
             "tracks": self.tracks
         })
-        sent = self.s.sendto(json_string.encode(), self.multicast_group)
-        print("Play Over")
+        self.s.sendto(json_string.encode(), self.multicast_group)
+        logging.info("Play Over")
         self.s.close()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Start director to play music with Pi Orchestra")
+    parser.add_argument("-d", "--debug", action="store_true", help="Print debug information")
+    args = parser.parse_args()
+
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Starting in DEBUG mode")
+
+    dir1 = Director()
+    dir1.file_name = "sheets/Mario.mid"
+    dir1.play()
 
 
 if __name__ == '__main__':
     set_default_logger("director.log")
 
-    dir1 = Director('sheets/BachConcerto')
-    dir1.play()
     try:
-        while True:
-            pass
+        main()
     except KeyboardInterrupt:
-        print("End of execution")
+        logging.info("Shutting down Director, Thanks for the ride!")

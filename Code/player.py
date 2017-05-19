@@ -51,6 +51,7 @@ class SocketPlayer:
         data, address = self.sock.recvfrom(1024)
         tracks, notes_in_all, notes_out_all = SocketPlayer.dissect_frame(data)
         self.logger.debug("Received %s bytes from %s", len(data), address[0])
+        self.logger.debug(data)
 
         # Get the note form the data and play it
         for track in self.tracks:
