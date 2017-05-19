@@ -3,12 +3,10 @@
 # January 2016
 # Manuel Moreno
 
-from time import *
 import socket
 import struct
-import bisect
-import itertools
 import json
+from DirectorMidiFile import *
 from logger import *
 
 # 8 music voices
@@ -58,35 +56,8 @@ class Director:
 
     def __init__(self, txt_file, tracks=8):
         self.name = txt_file
-        self.tracks = tracks
-        self.notes = [[] for i in range(self.tracks)]
-        self.notes_playing = [[] for i in range(self.tracks)]
-
-        minim = 100
-        maxim = 0
-        for track in range(self.tracks):
-            with open(self.name + str(track) + '.txt') as f:
-                for line in f:
-                    data = line.split()
-                    try:
-                        note = PlayNote(float(data[0]), int(data[1]), int(data[2]), float(data[3]))
-                    except Exception as e:
-                        print(e)
-                        print(data)
-                        print(track, len(self.notes[track]))
-                        print(self.name + str(track) + '.txt')
-                    if note.time > maxim:
-                        maxim = note.time
-                    if 0. < note.duration < minim:
-                        minim = note.duration
-                    # print("Note:",note)
-                    self.notes[track].append(note)
-                    # self.notes[track].sort()
-
-        self.step = minim
-        self.t_end = maxim
-        print(self.t_end)
-        print(self.step)
+        self.mid = DirectorMidiFile(self.name)
+        self.tracks = len(self.mid.tracks)
 
         # create a raw socket
         print("Init Multicast socket")
@@ -104,50 +75,27 @@ class Director:
 
     def play(self):
         t = 0
-        print("Playing...")
-        while t < self.t_end:
+        logging.info("Playing...")
+
+        for msg, track in self.mid.play_tracks():
             msg_out = {}
             msg_in = {}
-            flag = False
-            for track in range(self.tracks):
-                if self.notes[track]:
-                    notes = list(
-                        itertools.takewhile(lambda x: x.time_start <= t, self.notes[track]))
-                    self.notes[track] = list(itertools.dropwhile(lambda x: x.time_start <= t,
-                                                                 self.notes[track]))
-                    notes_in = [x.pitch for x in notes]
-                    if notes_in:
-                        msg_in[track] = notes_in
-                        flag |= True
 
-                    # Remove the note and add it to the playing notes
-                    for note in notes:
-                        bisect.insort_left(self.notes_playing[track], note)
+            if msg.type == 'note_on':
+                msg_in[track] = msg.note
+            elif msg.type == 'note_off':
+                msg_out[track] = msg.note
+            else:
+                continue
 
-                if self.notes_playing[track]:
-                    out_notes = list(itertools.takewhile(lambda x: x.time_off <= t,
-                                                         self.notes_playing[track]))
+            json_string = json.dumps({
+                "in": msg_in,
+                "out": msg_out,
+                "tracks": self.tracks
+            })
+            logging.debug("t:", t, "data:", json_string)
+            sent = self.s.sendto(json_string.encode(), self.multicast_group)
 
-                    self.notes_playing[track] = list(itertools.dropwhile(lambda x: x.time_off <= t,
-                                                                         self.notes_playing[track]))
-                    out_notes = list(map(lambda x: x.pitch, out_notes))
-                    if out_notes:
-                        msg_out[track] = out_notes
-                        flag |= True
-
-            if flag:  # new event
-                json_string = json.dumps({
-                    "in": msg_in,
-                    "out": msg_out,
-                    "tracks": self.tracks
-                })
-                logging.debug("t:", t, "data:", json_string)
-                sent = self.s.sendto(json_string.encode(), self.multicast_group)
-            sleep(self.step)  # step between notes
-            t += self.step
-
-        # Last Message to stop music
-        sleep(self.step)
         json_string = json.dumps({
             "in": {},
             "out": list(range(self.tracks)),
@@ -161,7 +109,7 @@ class Director:
 if __name__ == '__main__':
     set_default_logger("director.log")
 
-    dir1 = Director('sheets/BachConcerto')
+    dir1 = Director('sheets/Mario.mid')
     dir1.play()
     try:
         while True:

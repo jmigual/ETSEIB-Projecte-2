@@ -17,7 +17,7 @@ def to_abstime(messages, i):
 
 def merge_tracks(tracks):
     messages = []
-    for i, track in tracks:
+    for i, track in enumerate(tracks):
         messages.extend(to_abstime(track, i))
 
     messages.sort(key=lambda x: x[0].time)
