@@ -30,7 +30,7 @@ class Director:
     """ Fist version using multicast ethernet
     """
 
-    def __init__(self):
+    def __init__(self) -> object:
         self.file_name = None
 
         # create a raw socket
@@ -46,14 +46,13 @@ class Director:
         ttl = struct.pack('b', 1)
         self.s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
         # print(str(self.notes[0]).replace(",", "\n"))
+        self.mid = None
+        self.tracks = None
 
-    def __setattr__(self, key, value):
-        super().__setattr__(key, value)
-        if key == "file_name":
-            self.mid = DirectorMidiFile(self.file_name)
-            self.tracks = len(self.mid.tracks)
+    def play(self, file_path):
+        self.mid = DirectorMidiFile(file_path)
+        self.tracks = len(self.mid.tracks)
 
-    def play(self):
         logging.info("Playing...")
         msg_out = {}
         msg_in = {}
@@ -102,8 +101,7 @@ def main():
         logging.debug("Starting in DEBUG mode")
 
     dir1 = Director()
-    dir1.file_name = "sheets/Mario.mid"
-    dir1.play()
+    dir1.play("sheets/Mario.mid")
 
 
 if __name__ == '__main__':

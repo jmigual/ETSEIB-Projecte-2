@@ -18,6 +18,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram.file import File
 import logging
 import urllib.request as req
+import director
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -25,6 +26,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+dire = director.Director()
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
@@ -54,7 +56,7 @@ def get_document(bot, update):
 
 
 def play_midi(file_path):
-    print("Stub: play file " + file_path)
+    dire.play(file_path)
 
 
 def error(bot, update, error):
