@@ -4,10 +4,17 @@
 \usepackage{fontspec}
 \usepackage[catalan]{babel}
 \usepackage{graphicx}
+\usepackage[
+	backend=biber,
+	citestyle=numeric  
+]{biblatex}
 
-\title{Construcció d'una orquestra amb Raspberry Pi}
-\author{Arnau Canyadell Miquel \and Joan Marcè Igual}
-\date{Primavera de 2017}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\def\arraystretch{1.5}
+
+\nocite{*}
+\bibliography{bibliografia.bib}
 
 \begin{document}
 
@@ -19,9 +26,9 @@
 	\textsc{ \LARGE Escola Tècnica Superior d'Enginyeria \\[1em] 
 		Industrial de Barcelona}
 	\par\vspace{2cm}
-	\textbf{\Huge Projecte II}
+	\textbf{\LARGE Projecte II}
 	\par\vspace{2cm}
-	{\LARGE Construcció d'una orquestra amb Raspberry Pi}
+	{\Huge Construcció d'una orquestra amb Raspberry Pi}
 	\vfill
 	\begin{flushright}
 		\large
@@ -40,9 +47,11 @@
 
 Donat que els dos creadors d'aquest projecte som músics i que tots dos hem participat en diverses orquestres el projecte de construir una orquestra mitjançant la tecnologia i \emph{Internet of Things} ens va semblar molt interessant i que podria integrar-se bé amb els nostres coneixements.
 
-\subsection{Altres projectes}
+\subsection{Projectes similars}
 
-Buscant si hi ha altres projectes semblants al que es vol realitzar s'ha trobat que Google l'any 2011 va crear el projecte \emph{YouTube Symphony Orchestra 2011}
+Buscant si hi ha altres projectes semblants al que es vol realitzar s'ha trobat que Google l'any 2011 va crear el projecte \emph{YouTube Symphony Orchestra 2011}\cite{YoutubeSymphoni} que tenia com a objectiu poder fer una orquestra a nivell mundial. Per fer-ho tots els músics es connectaven a internet i després tocaven tots junts i tot seguit totes les pistes d'àudio que aquests generaven s'ajuntaven formant una orquestra.
+
+A part també hi ha un projecte anomenat \emph{Orchestra! a Distributed Platform for Virtual Musical Groups and Music Distance Learning over the Internet in Java \texttrademark Technology} \cite{Orchestra}. Que permet a diversos grups de música assajar o aprendre conjuntament a través d'internet tot i que no es trobin junts físicament.
 
 \section{Objectius}
 
@@ -50,7 +59,6 @@ Buscant si hi ha altres projectes semblants al que es vol realitzar s'ha trobat 
 
 \section{Resultats}
 
-\section{Bibliografia}
-
+\printbibliography
 
 \end{document}
