@@ -30,7 +30,7 @@ class Director:
     """ Fist version using multicast ethernet
     """
 
-    def __init__(self) -> object:
+    def __init__(self):
         self.file_name = None
 
         # create a raw socket
