@@ -1,6 +1,6 @@
 # Documentació
 
-## Instruccions d'ús (no actualitzat)
+## Instruccions d'ús
 Tots els arxius a executar es troben al directori `Code`.
 1. Obrir una terminal en un ordinador que pugui fer multicast a la xarxa i executar `./bot.py`.
 2. Connectar-se amb ssh a cadascuna de les raspberries (`ssh pi@10.5.3.128` per exemple). Si la raspberry no està actualitzada, executar `./configure.sh`.
