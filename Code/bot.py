@@ -54,7 +54,7 @@ def play_midi(file_path):
 
 
 def error(bot, update, error):
-    logger.warning('Update "%s" caused error "%s"' % (update, error))
+    logging.warning('Update "%s" caused error "%s"' % (update, error))
 
 
 def main():
