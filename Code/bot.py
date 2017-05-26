@@ -15,16 +15,10 @@ bot.
 """
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from telegram.file import File
-import logging
+from logger import *
 import urllib.request as req
 import director
 
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
 
 dire = director.Director()
 
@@ -64,6 +58,8 @@ def error(bot, update, error):
 
 
 def main():
+    set_default_logger("bot.log")
+
     # Create the EventHandler and pass it your bot's token.
     updater = Updater("321792127:AAHE9cK06THBoeJFJav07ZwAYKFNKAmWZ9w")
 
