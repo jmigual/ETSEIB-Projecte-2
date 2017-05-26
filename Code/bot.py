@@ -45,8 +45,9 @@ def get_document(bot, update):
         return
     f = bot.getFile(doc.file_id)
     tmp_file = req.urlretrieve(f.file_path)
+    update.message.reply_text("🎵🎵 Ara tocaré la peça " + doc.file_name + " 🎵🎵")
     play_midi(tmp_file[0])
-    update.message.reply_text("Ara tocaré la peça " + doc.file_name)
+    update.message.reply_text("Ja he acabat de tocar la peça " + doc.file_name + " 😁")
 
 
 def play_midi(file_path):
