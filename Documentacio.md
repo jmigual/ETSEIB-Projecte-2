@@ -1,13 +1,10 @@
 # Documentació
 
-## Instruccions d'ús
-1. Obrir tres terminals en un ordinador de l'aula (i.e. un que pugui enviar missatges multicast)
-2. En la primera terminal, connectar-se amb SSH a la raspberry pi: `ssh pi@10.5.3.128` i executar la comanda `vncserver`. Després ens desplacem al directori on hi ha clonat el repositori, fem `cd Code` i `python3 clientPlayer.py -t tracks_a_reproduir_en_aquest_dispositiu` (per exemple, per reproduir els tracks 3 i 4 farem `python3 clientPlayer.py -t 3,4`
-3. En la segona terminal, obrir una connexió gràfica amb la raspberry pi: `xtightvncviewer 10.5.3.128:1`. Un cop allà canviar el sistema d'output d'audio (control dret a l'icona d'audio de dalt a la dreta i seleccionar "C-Media USB Headphone Set", suposant que utilitzem la tarjeta d'audio. Ja podem tancar la connexió gràfica i la terminal.
-4. En el tercer terminal, ens desplacem al directori on hi ha clonat el repositori, fem `cd Code` i `python3 director.py`.
-
-Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 i 3 en noves terminals canviant la IP.
-
+## Instruccions d'ús (no actualitzat)
+Tots els arxius a executar es troben al directori `Code`.
+1. Obrir una terminal en un ordinador que pugui fer multicast a la xarxa i executar `./bot.py`.
+2. Connectar-se amb ssh a cadascuna de les raspberries (`ssh pi@10.5.3.128` per exemple). Si la raspberry no està actualitzada, executar `./configure.sh`.
+3. En cada raspberry pi, executar `./setSoundDevice.py` i després `python3 clientPlayer.py -t tracks_a_reproduir_en_aquest_dispositiu` (per exemple, per reproduir els tracks 3 i 4 farem `python3 clientPlayer.py -t 3,4`.
 
 ## Historial
 
@@ -23,7 +20,7 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 - Analitzada comunicació amb sockets
 - Començada reproducció en el client
 
-### 2017/03/17
+### 2017/03/17: defensa 1
 
 - Feta defensa 1
 - Creada i debuguejada una nova versió del client (clientPlayer.py) que rep i reprodueix les notes (part de reproducció només funciona a l'ordinador i no a la raspberry)
@@ -46,7 +43,7 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 - Instruccions d'ús
 - ...
 
-### 2017/04/28
+### 2017/04/28: defensa 2
 
 - Feta defensa 2: primera prova amb més d'un altaveu amb èxit :D
 
@@ -67,6 +64,16 @@ Si volem tenir més d'una raspberry pi reproduint música, repetim els passos 2 
 - Reproducció de midi també funciona (falta optimitzar).
 - Pel proper dia, falta ajuntar els dos punts anteriors i ja ho tindrem.
 - Comença la redacció de la memòria.
+
+### 2017/05/26
+
+- Units els codis del bot i el director.
+- Actualitzat l'arxiu de configuració per instal·lar les llibreries de telegram.
+- Redacció de la memòria i la presentació final.
+
+### 20117/06/02: defensa final
+
+- Presentació final del treball
 
 ## APIs
 
