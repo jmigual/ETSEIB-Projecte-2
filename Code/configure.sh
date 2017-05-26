@@ -7,7 +7,7 @@ usage() {
 
 packages="python3 fluidsynth alsa-tools"
 
-pip_packs="mido python-telgram-bot"
+pip_packs="mido python-telegram-bot"
 pip="pip3 install --user ${pip_packs}"
 
 while getopts ":ap" o; do
