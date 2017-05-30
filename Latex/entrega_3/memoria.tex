@@ -1,4 +1,4 @@
-\documentclass[a4paper]{paper}
+\documentclass[a4paper]{article}
 
 \usepackage[margin=2cm]{geometry}
 \usepackage{fontspec}
@@ -55,6 +55,20 @@ Buscant si hi ha altres projectes semblants al que es vol realitzar s'ha trobat 
 A part també hi ha un projecte anomenat \emph{Orchestra! a Distributed Platform for Virtual Musical Groups and Music Distance Learning over the Internet in Java \texttrademark Technology} \cite{Orchestra}. Que permet a diversos grups de música assajar o aprendre conjuntament a través d'internet tot i que no es trobin junts físicament.
 
 \section{Objectius}
+A l'inici del projecte es van establir uns objectius a complir en el projecte. Aquests es van dividir en dos grups. D'una banda, els objectius a curt termini, objectius que estaven ben definits i s'havien de fer sí o sí abans que s'acabés el projecte; i d'altra banda hi havia els objectius o idees a llarg termini, que no estaven tan ben definits i que s'intentarien completar si hi havia temps.
+
+\subsection{Objectius a curt termini}
+\begin{itemize}
+	\item Aconseguir rebre la música d'un ordinador
+	\item Enviar la música a una Raspberry Pi
+	\item Reproduir la música en una Raspberry Pi
+\end{itemize}
+
+\subsection{Objectius a llarg termini}
+\begin{itemize}
+	\item Programar un bot de Telegram que reprodueixi amb l'orquestra de Raspberry Pis la música que se li enviï.
+	\item Enviar música del mòbil a l'ordinador.
+\end{itemize}
 
 \section{Desenvolupament del treball}
 El treball s'ha dut a terme durant un el quadrimestre de primavera, des de mitjans de febrer fins a finals de maig. S'ha estructurat la feina en 14 sessions, fent defenses parcials del projecte a les sessions 5 i 9, i una defensa final en l'última.
@@ -75,11 +89,17 @@ En el repositori hi ha un document, \texttt{documentacio.md}, on es detalla l'hi
 En les primeres sessions es va decidir el tema i es van establir els objectius del projecte. També es van definir les eines de treball que s'utilitzarien durant el projecte: es va crear el repositori a GitHub i es va crear el Trello. D'altra banda, es va buscar documentació sobre el FluidSynth i el Polyphone i es va analitzar el codi del director que ja estava implementat. Finalment, es va aprendre a configurar la raspberry pi i es va configurar la raspberry que s'ha utilitzat per fer les proves al llarg de tot el desenvolupament.
 
 \subsubsection{Programació del director i els músics (sessions 4 a 9)}
-Un cop endinsats en el projecte, es va començar a desenvolupar el programari. Es va programar, primer de tot, una versió del músic, que rebia la música del director i la reproduïa.
+Un cop endinsats en el projecte, es va començar a desenvolupar el programari. Es va programar, primer de tot, una versió del músic, que rebia la música del director i la reproduïa. En aquest punt es va trobar un problema amb la configuració de la sortida d'àudio de la raspberry pi: la sortida per defecte és el minijack, i no se sabia com canviar-la a la targeta USB. Per tal de solucionar-ho es va provar de canviar diverses configuracions, i finalment es va optar per instal·lar pixel a l'ordinador monoplaca i canviar la configuració manualment des de l'entorn gràfic. Així es va aconseguir solucionar el problema però el canvi implicava connectar-se manualment a l'entorn gràfic cada cop que s'iniciava la raspberry pi.
 
-En aquest punt es van trobar problemes amb la configuració de la sortida d'àudio de l'ordinador monoplaca. Per tal de solucionar-ho es va
+Un cop tot funcionava es modificar el director. Es van crear les classes Director i Nota per separar, ordenar i simplificar el codi. En la segona defensa del projecte, a la sessió 9, es va poder dur a terme la primera prova de l'orquestra amb diversos músics. Al final d'aquesta fase del treball ja s'havien complert els objectius a curt termini.
 
 \subsubsection{Implementació del bot de Telegram i reproducció d'arxius MIDI (sessions 10 a 14)}
+Finalment es va trobar una manera de canviar la sortida d'àudio de les raspberry pis i es va crear un script per canviar-lo de forma simplificada. Després d'això es va treballar en l'objectiu de crear un bot de Telegram que reproduís la música que se li envia, i així complir els dos objectius a llarg termini. Per a dur a terme aquest objectius es va paral·lelitzar la feina en la creació del bot i en la reproducció d'arxius MIDI.
+
+\subsubsection{Creació del bot de Telegram}
+
+\subsubsection{Reproducció d'arxius MIDI}
+
 
 \section{Resultats}
 
