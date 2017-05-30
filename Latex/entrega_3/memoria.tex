@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper]{paper}
 
 \usepackage[margin=2cm]{geometry}
 \usepackage{fontspec}
@@ -64,9 +64,9 @@ Degut a ala naturalesa de desenvolupament de programari informàtic del projecte
 
 Per a l'assignació de tasques dintre del grup s'ha utilitzat l'eina \textbf{Trello}, que permet crear tasques amb data límit, assignar-les a una persona i marcar tasques com a realitzades o endarrerides, entre altres coses.
 
-Python
+Per al desenvolupament del programari s'ha utilitzat majoritàriament el llenguatge Python, amb el qual està fet tot el codi de l'orquestra, inclosos director, músics i bot. Per a la configuració de les raspberry pis s'ha utilitzat shell script, i també s'ha treballat molt amb comandes de git.
 
-\LaTeX
+Finalment, totes les presentacions del projecte i la memòria s'han fet amb \LaTeX.
 
 \subsection{Evolució del projecte}
 En el repositori hi ha un document, \texttt{documentacio.md}, on es detalla l'historial de feina feta en cada sessió (començant en la sessió 3).
@@ -75,6 +75,9 @@ En el repositori hi ha un document, \texttt{documentacio.md}, on es detalla l'hi
 En les primeres sessions es va decidir el tema i es van establir els objectius del projecte. També es van definir les eines de treball que s'utilitzarien durant el projecte: es va crear el repositori a GitHub i es va crear el Trello. D'altra banda, es va buscar documentació sobre el FluidSynth i el Polyphone i es va analitzar el codi del director que ja estava implementat. Finalment, es va aprendre a configurar la raspberry pi i es va configurar la raspberry que s'ha utilitzat per fer les proves al llarg de tot el desenvolupament.
 
 \subsubsection{Programació del director i els músics (sessions 4 a 9)}
+Un cop endinsats en el projecte, es va començar a desenvolupar el programari. Es va programar, primer de tot, una versió del músic, que rebia la música del director i la reproduïa.
+
+En aquest punt es van trobar problemes amb la configuració de la sortida d'àudio de l'ordinador monoplaca. Per tal de solucionar-ho es va
 
 \subsubsection{Implementació del bot de Telegram i reproducció d'arxius MIDI (sessions 10 a 14)}
 
