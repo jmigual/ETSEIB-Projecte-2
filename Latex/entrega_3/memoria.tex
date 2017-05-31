@@ -1,13 +1,13 @@
 \documentclass[a4paper]{article}
 
-\usepackage[margin=2cm]{geometry}
-\usepackage{fontspec}
 \usepackage[catalan]{babel}
-\usepackage{graphicx}
 \usepackage[
-	backend=biber,
-	citestyle=numeric  
+backend=biber,
+citestyle=numeric  
 ]{biblatex}
+\usepackage{fontspec}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
 \usepackage{url}
 
 \setlength{\parindent}{0pt}
@@ -76,9 +76,9 @@ El treball s'ha dut a terme durant un el quadrimestre de primavera, des de mitja
 \subsection{Eines de treball}
 Degut a ala naturalesa de desenvolupament de programari informàtic del projecte i de la necessitat de mantenir un historial de versions i un ordre del codi, s'ha treballat amb un \textbf{repositori públic de GitHub} (\url{https://github.com/jmigual/projecte2/}).
 
-Per a l'assignació de tasques dintre del grup s'ha utilitzat l'eina \textbf{Trello}, que permet crear tasques amb data límit, assignar-les a una persona i marcar tasques com a realitzades o endarrerides, entre altres coses.
+Per a l'assignació de tasques dintre del grup s'ha utilitzat l'eina Trello\cite{trello}, que permet crear tasques amb data límit, assignar-les a una persona i marcar tasques com a realitzades o endarrerides, entre altres coses.
 
-Per al desenvolupament del programari s'ha utilitzat majoritàriament el llenguatge Python, amb el qual està fet tot el codi de l'orquestra, inclosos director, músics i bot. Per a la configuració de les raspberry pis s'ha utilitzat shell script, i també s'ha treballat molt amb comandes de git.
+Per al desenvolupament del programari s'ha utilitzat majoritàriament el llenguatge Python\cite{python}, amb el qual està fet tot el codi de l'orquestra, inclosos director, músics i bot. S'ha utilitzat l'entorn de Pycharm\cite{pycharm} per a escriure codi, executar-lo i depurar-lo en aquest llenguatge. Per a la configuració de les raspberry pis s'ha utilitzat shell script, i també s'ha treballat molt amb comandes de git.
 
 Finalment, totes les presentacions del projecte i la memòria s'han fet amb \LaTeX.
 
@@ -97,6 +97,7 @@ Un cop tot funcionava es modificar el director. Es van crear les classes Directo
 Finalment es va trobar una manera de canviar la sortida d'àudio de les raspberry pis i es va crear un script per canviar-lo de forma simplificada. Després d'això es va treballar en l'objectiu de crear un bot de Telegram que reproduís la música que se li envia, i així complir els dos objectius a llarg termini. Per a dur a terme aquest objectius es va paral·lelitzar la feina en la creació del bot i en la reproducció d'arxius MIDI.
 
 \subsubsection{Creació del bot de Telegram}
+
 
 \subsubsection{Reproducció d'arxius MIDI}
 
