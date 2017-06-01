@@ -12,6 +12,11 @@ citestyle=numeric
 \usepackage{url}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{svg}
+
+\usetikzlibrary{positioning}
 
 \input{python.tex}
 
@@ -107,7 +112,11 @@ Finalment es va trobar una manera de canviar la sortida d'àudio de les Raspberr
 \section{Funcionament de l'orquestra}
 
 \subsection{Comunicació entre director i intèrprets}
+Per al funcionament de la orquestra hi ha un dispositiu que fa de director i la resta de dispositius fan d'intèrprets, tots ells són Raspberry Pis.
 
+Per al funcionament de la comunicació s'ha usat multicast. El funcionament és el següent: els clients es subscriuen a una IP en concret i quan algú envia dades a aquesta IP llavors el router reenvia aquestes dades a tots els dispositius que s'han subscrit.
+
+\input{xarxa.tex}
 
 \subsection{Bot de Telegram}
 

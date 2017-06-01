@@ -1,0 +1,10 @@
+Prova xunga per veure perquè no funciona això
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node[label = below:{Router}](router){\includesvg{images/cisco/router}};
+		\node[below = of router, label = below:{Switch}](switch){\includesvg{images/cisco/workgroup_switch} };
+		\draw[latex-latex] (router) -- (switch);
+	\end{tikzpicture}
+\end{figure}
