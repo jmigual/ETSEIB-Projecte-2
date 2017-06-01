@@ -10,7 +10,7 @@ citestyle=numeric
 \usepackage{graphicx}
 \usepackage{titlesec}
 \usepackage{url}
-\usepackage{minted}
+\usepackage{listings}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
@@ -110,7 +110,7 @@ Per a la reproducció dels arxius MIDI s'ha usat la llibreria Mido\cite{mido}. Q
 Així doncs, un cop la connexió amb el bot de Telegram està finalitzada és tant senzill com passar el camí fins a l'arxiu que es vulgui reproduir i el nou director s'encarrega de demanar-li a la llibreria la informació necessària.
 
 El codi per reproduir queda així de la següent manera:
-\begin{minted}[linenos, frame=lines]{python}
+\begin{lstlisting}
 # file_path conté el camí fins a l'arxiu
 mid = DirectorMidiFile(file_path)
 for missatge, track in mid.play_tracks():
@@ -120,7 +120,7 @@ for missatge, track in mid.play_tracks():
 		"out": msg_out
 	})
 	socket.sendto(json_string.encode(), multicast_group)
-\end{minted}
+\end{lstlisting}
 
 
 \section{Resultats}
