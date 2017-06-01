@@ -14,7 +14,6 @@ citestyle=numeric
 \usepackage{xcolor}
 \usepackage{tikz}
 \usepackage{float}
-\usepackage{svg}
 
 \usetikzlibrary{positioning}
 
@@ -29,6 +28,7 @@ citestyle=numeric
 
 \let\oldsection\section
 \renewcommand\section{\clearpage\oldsection}
+\renewcommand{\lstlistingname}{Codi}
 
 \begin{document}
 
@@ -59,7 +59,9 @@ citestyle=numeric
 
 \subsection{Motivacions}
 
-Donat que els dos creadors d'aquest projecte som músics i que tots dos hem participat en diverses orquestres el projecte de construir una orquestra mitjançant la tecnologia i \emph{Internet of Things} ens va semblar molt interessant i que podria integrar-se bé amb els nostres coneixements.
+Els dos creadors d'aquest projecte hem realitzat diversos estudis de música i, a més a més, hem participat algun cop en una orquestra. També, com a estudiants d'enginyeria industrial i informàtica que som, ens apassiona la tecnologia.
+
+Així doncs, s'ha decidit intentar combinar aquestes dues motivacions i crear una orquestra que sigui interpretada i dirigida mitjançant tecnologia completament. S'intentarà usar Raspberry Pi ja que són dispositius molt versàtils i perfectament aptes per aquesta tasca. Aquests estaran connectats entre ells mitjançant \emph{multicast} de manera que hi haurà un que farà el rol de director i els altres el d'intèrpret.
 
 \subsection{Projectes similars}
 
@@ -126,23 +128,30 @@ Per a la reproducció dels arxius MIDI s'ha usat la llibreria Mido\cite{mido}. Q
 
 Així doncs, un cop la connexió amb el bot de Telegram està finalitzada és tant senzill com passar el camí fins a l'arxiu que es vulgui reproduir i el nou director s'encarrega de demanar-li a la llibreria la informació necessària.
 
-El codi per reproduir queda així de la següent manera:
-\begin{lstlisting}[style=mypython]
-# file_path: conté el camí fins a l'arxiu
-# multicast_group: conté la ip al grup de multicast
-mid = DirectorMidiFile(file_path)
-for missatge, track in mid.play_tracks():
-	msg_in, msg_out = descodifica(missatge)
-	# Genera string a enviar
-	json_string = json.dumps({
+Una versió simplificada del codi és la següent:
+\begin{lstlisting}[
+		style=mypython, 
+		xleftmargin=.1\textwidth, 
+		xrightmargin=.1\textwidth,
+		captionpos=b,
+		caption={Bucle bàsic per enviar les dades de notes}
+		]
+	# file_path: conté el camí fins a l'arxiu
+	# multicast_group: conté la ip al grup de multicast
+	# La funció play_tracks() ja fa les pauses que s'hagin de fer perquè
+	# les notes sonin quan toca
+	mid = DirectorMidiFile(file_path)
+	for missatge, track in mid.play_tracks():
+		msg_in, msg_out = descodifica(missatge)
+		# Genera string a enviar
+		json_string = json.dumps({
 		"in": msg_in,
 		"out": msg_out
-	})
+		})
 	
-	# Enviar dades al multicast
-	socket.sendto(json_string.encode(), multicast_group)
-\end{lstlisting}
-
+		# Enviar dades al multicast
+		socket.sendto(json_string.encode(), multicast_group)
+\end{lstlisting}	
 
 \section{Resultats}
 
