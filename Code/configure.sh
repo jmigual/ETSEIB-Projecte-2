@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
 
 usage() {
-	echo "Usage: $0 [-a|-p]"
-	echo "-a  Configure all (python packages)"
+	echo "Usage: $0 [-p]"
+	echo "Configure the device to work as director or player"
+	echo "-p  Configure python packages only"
 }
 
-packages="python3 fluidsynth alsa-tools"
+packages="python3 fluidsynth alsta-tools"
 
 pip_packs="mido"
 pip="pip3 install --user ${pip_packs}"
 
 while getopts ":ap" o; do
     case "${o}" in
-        a)
-            packages=${packages} tightvncserver
-            ;;
         p)
             echo Installing the following python packages
             echo ${pip_packs}
