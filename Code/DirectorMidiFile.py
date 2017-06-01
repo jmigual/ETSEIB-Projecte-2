@@ -81,9 +81,8 @@ class DirectorMidiFile(mido.MidiFile):
         sleep = time.sleep
 
         for msg, track in self:
-            sleep(msg.time)
-
             if isinstance(msg, mido.MetaMessage) and not meta_messages:
                 continue
             else:
                 yield msg, track
+            sleep(msg.time)

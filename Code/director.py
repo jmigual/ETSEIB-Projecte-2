@@ -93,6 +93,7 @@ class Director:
 
 def main():
     parser = argparse.ArgumentParser(description="Start director to play music with Pi Orchestra")
+    parser.add_argument("path", help="Path to file to be played")
     parser.add_argument("-d", "--debug", action="store_true", help="Print debug information")
     args = parser.parse_args()
 
@@ -101,7 +102,7 @@ def main():
         logging.debug("Starting in DEBUG mode")
 
     dir1 = Director()
-    dir1.play("sheets/Mario.mid")
+    dir1.play(args.path)
 
 
 if __name__ == '__main__':

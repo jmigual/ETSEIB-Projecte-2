@@ -34,6 +34,7 @@ class SocketPlayer:
     def run(self):
         # Create a socket and bind it to the server address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(SocketPlayer.server_address)
         self.logger.info("Started socket at {0}".format(SocketPlayer.server_address))
 
