@@ -6,19 +6,21 @@
 \usepackage[catalan]{babel}
 \usepackage{hyperref}
 \usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usepackage{listings}
+
+\input{python.tex}
 
 \AtBeginSection[]
 {
-	\begin{frame}
-		\frametitle{Contingut}
+	\begin{frame}{Contingut}
 		\tableofcontents[currentsection]
 	\end{frame}
 }
 
 \AtBeginSubsection[]
 {
-	\begin{frame}
-		\frametitle{Contingut}
+	\begin{frame}{Contingut}
 		\tableofcontents[currentsection,currentsubsection]
 	\end{frame}
 }
@@ -31,8 +33,7 @@
 \frame{\titlepage}
 \section{Introducció}
 
-\begin{frame}
-	\frametitle{Descripció del projecte}
+\begin{frame}{Descripció del projecte}
 	Crear amb Raspberry Pi una orquestra musical formada per un director i uns quants músics que interpreten el que els mana el director.
 	\begin{figure}
 		\includegraphics[width=0.475\linewidth]{images/raspberry}
@@ -42,8 +43,7 @@
 \end{frame}
 
 \section{Feina feta}
-\begin{frame}
-	\frametitle{Què hem fet fins ara?}
+\begin{frame}{Què hem fet fins ara?}
 	\begin{itemize}[<+->]
 		\item Establiment dels objectius
 		\item Analitzat el codi del director
@@ -54,16 +54,27 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Principals problemes trobats}
+	\frametitle{Principals problemes trobats i solucionats}
 	\begin{itemize}[<+->]
 		\item Mida de les targetes SD. 4 GB no era suficient.
-		\item Àudio en la raspberry pi. No hem sabut canviar el dispositiu de sortida des de l'entorn de comandes. Hem hagut d'instal·lar l'entorn gràfic a la raspberry pi.
+		\begin{itemize}
+			\item Usar una targeta més gran
+			\item Usar versió LITE de \texttt{Raspbian}
+		\end{itemize}
+		\item Àudio en la raspberry pi. No hem sabut canviar el dispositiu de sortida des de l'entorn de comandes. Hem hagut d'insta\l.lar l'entorn gràfic a la raspberry pi.
+		\begin{itemize}
+			\item Finalment trobat
+			\item Crear script que canvii el dispositiu per defecte
+		\end{itemize}
+		\item La llibreria midi Music21 és molt lenta per llegir midi.
+		\begin{itemize}
+			\item Usar la llibreria \texttt{mido}.
+		\end{itemize}
 	\end{itemize}
 \end{frame}
 
 \section{Objectius}
-\begin{frame}
-	\frametitle{Feina a fer a partir d'ara}
+\begin{frame}{Feina a fer a partir d'ara}
 	\begin{itemize}[<+->]
 		\item Bot de Telegram que reprodueixi midi
 	\end{itemize}
@@ -76,9 +87,40 @@
 	\end{figure}
 \end{frame}
 
+\section{Funcionament}
+\begin{frame}{Multicast}
+	\input{xarxa.tex}
+\end{frame}
+\begin{frame}[fragile]{Bucle de reproducció}
+	\begin{lstlisting}[
+			label={lst:code},
+			style=mypython, 
+			basicstyle=\ttfamily\tiny,
+			captionpos=b,
+			xleftmargin=.05\textwidth, 
+			xrightmargin=.05\textwidth,
+			caption={Bucle bàsic per enviar les dades de notes}
+		]
+	# file_path: conté el camí fins a l'arxiu
+	# multicast_group: conté la ip al grup de multicast
+	# La funció play_tracks() ja fa les pauses que s'hagin de fer perquè
+	# les notes sonin quan toca
+	mid = DirectorMidiFile(file_path)
+	for missatge, track in mid.play_tracks():
+		msg_in, msg_out = descodifica(missatge)
+		# Genera string a enviar
+		json_string = json.dumps({
+		"in": msg_in,
+		"out": msg_out
+		})
+		
+		# Enviar dades al multicast
+		socket.sendto(json_string.encode(), multicast_group)
+	\end{lstlisting}
+\end{frame}
+
 \section{Demo}
-\begin{frame}
-	\frametitle{Demo en directe}
+\begin{frame}{Demo en directe}
 	\begin{figure}
 		\includegraphics[width=\linewidth]{images/orchestra}
 	\end{figure}
