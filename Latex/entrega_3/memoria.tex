@@ -10,6 +10,7 @@ citestyle=numeric
 \usepackage{graphicx}
 \usepackage{titlesec}
 \usepackage{url}
+\usepackage{minted}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
@@ -18,7 +19,8 @@ citestyle=numeric
 \nocite{*}
 \bibliography{bibliografia.bib}
 
-\newcommand{\sectionbreak}{\clearpage}
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
 
 \begin{document}
 
@@ -81,28 +83,44 @@ Degut a ala naturalesa de desenvolupament de programari informàtic del projecte
 
 Per a l'assignació de tasques dintre del grup s'ha utilitzat l'eina Trello\cite{trello}, que permet crear tasques amb data límit, assignar-les a una persona i marcar tasques com a realitzades o endarrerides, entre altres coses.
 
-Per al desenvolupament del programari s'ha utilitzat majoritàriament el llenguatge Python\cite{python}, amb el qual està fet tot el codi de l'orquestra, inclosos director, músics i bot. S'ha utilitzat l'entorn de Pycharm\cite{pycharm} per a escriure codi, executar-lo i depurar-lo en aquest llenguatge. Per a la configuració de les raspberry pis s'ha utilitzat shell script, i també s'ha treballat molt amb comandes de git.
+Per al desenvolupament del programari s'ha utilitzat majoritàriament el llenguatge Python\cite{python}, amb el qual està fet tot el codi de l'orquestra, inclosos director, músics i bot. S'ha utilitzat l'entorn de Pycharm\cite{pycharm} per a escriure codi, executar-lo i depurar-lo en aquest llenguatge. Per a la configuració de les Raspberry Pis s'ha utilitzat shell script, i també s'ha treballat molt amb comandes de git.
 
 Finalment, totes les presentacions del projecte i la memòria s'han fet amb \LaTeX.
 
 \subsection{Evolució del projecte}
-En el repositori hi ha un document, \texttt{documentacio.md}, on es detalla l'historial de feina feta en cada sessió (començant en la sessió 3).
+En el repositori hi ha un document, \texttt{Documentacio.md}, on es detalla l'historial de feina feta en cada sessió (començant en la sessió 3).
 
 \subsubsection{Inici (sessions 1 a 3)}
-En les primeres sessions es va decidir el tema i es van establir els objectius del projecte. També es van definir les eines de treball que s'utilitzarien durant el projecte: es va crear el repositori a GitHub i es va crear el Trello. D'altra banda, es va buscar documentació sobre el FluidSynth i el Polyphone i es va analitzar el codi del director que ja estava implementat. Finalment, es va aprendre a configurar la raspberry pi i es va configurar la raspberry que s'ha utilitzat per fer les proves al llarg de tot el desenvolupament.
+En les primeres sessions es va decidir el tema i es van establir els objectius del projecte. També es van definir les eines de treball que s'utilitzarien durant el projecte: es va crear el repositori a GitHub i es va crear el Trello. D'altra banda, es va buscar documentació sobre el FluidSynth i el Polyphone i es va analitzar el codi del director que ja estava implementat. Finalment, es va aprendre a configurar la Raspberry Pi i es va configurar la raspberry que s'ha utilitzat per fer les proves al llarg de tot el desenvolupament.
 
 \subsubsection{Programació del director i els músics (sessions 4 a 9)}
-Un cop endinsats en el projecte, es va començar a desenvolupar el programari. Es va programar, primer de tot, una versió del músic, que rebia la música del director i la reproduïa. En aquest punt es va trobar un problema amb la configuració de la sortida d'àudio de la raspberry pi: la sortida per defecte és el minijack, i no se sabia com canviar-la a la targeta USB. Per tal de solucionar-ho es va provar de canviar diverses configuracions, i finalment es va optar per instal·lar pixel a l'ordinador monoplaca i canviar la configuració manualment des de l'entorn gràfic. Així es va aconseguir solucionar el problema però el canvi implicava connectar-se manualment a l'entorn gràfic cada cop que s'iniciava la raspberry pi.
+Un cop endinsats en el projecte, es va començar a desenvolupar el programari. Es va programar, primer de tot, una versió del músic, que rebia la música del director i la reproduïa. En aquest punt es va trobar un problema amb la configuració de la sortida d'àudio de la Raspberry Pi: la sortida per defecte és el minijack, i no se sabia com canviar-la a la targeta USB. Per tal de solucionar-ho es va provar de canviar diverses configuracions, i finalment es va optar per instal·lar pixel a l'ordinador monoplaca i canviar la configuració manualment des de l'entorn gràfic. Així es va aconseguir solucionar el problema però el canvi implicava connectar-se manualment a l'entorn gràfic cada cop que s'iniciava la Raspberry Pi.
 
 Un cop tot funcionava es modificar el director. Es van crear les classes Director i Nota per separar, ordenar i simplificar el codi. En la segona defensa del projecte, a la sessió 9, es va poder dur a terme la primera prova de l'orquestra amb diversos músics. Al final d'aquesta fase del treball ja s'havien complert els objectius a curt termini.
 
 \subsubsection{Implementació del bot de Telegram i reproducció d'arxius MIDI (sessions 10 a 14)}
-Finalment es va trobar una manera de canviar la sortida d'àudio de les raspberry pis i es va crear un script per canviar-lo de forma simplificada. Després d'això es va treballar en l'objectiu de crear un bot de Telegram que reproduís la música que se li envia, i així complir els dos objectius a llarg termini. Per a dur a terme aquest objectius es va paral·lelitzar la feina en la creació del bot i en la reproducció d'arxius MIDI.
+Finalment es va trobar una manera de canviar la sortida d'àudio de les Raspberry Pis i es va crear un script per canviar-lo de forma simplificada. Després d'això es va treballar en l'objectiu de crear un bot de Telegram que reproduís la música que se li envia, i així complir els dos objectius a llarg termini. Per a dur a terme aquest objectius es va para\l.lelitzar la feina en la creació del bot i en la reproducció d'arxius MIDI.
 
 \subsubsection{Creació del bot de Telegram}
 
 
 \subsubsection{Reproducció d'arxius MIDI}
+Per a la reproducció dels arxius MIDI s'ha usat la llibreria Mido\cite{mido}. Que permet la reproducció en temps real d'aquest tipus d'arxius. Aquesta llibreria s'ha modificat lleugerament per poder obtenir tots els canals del MIDI mentre es reprodueix de manera que pot ser configurat amb el sistema de múltiples Raspberry Pi per reproduir que s'usa en aquest projecte.
+
+Així doncs, un cop la connexió amb el bot de Telegram està finalitzada és tant senzill com passar el camí fins a l'arxiu que es vulgui reproduir i el nou director s'encarrega de demanar-li a la llibreria la informació necessària.
+
+El codi per reproduir queda així de la següent manera:
+\begin{minted}[linenos, frame=lines]{python}
+# file_path conté el camí fins a l'arxiu
+mid = DirectorMidiFile(file_path)
+for missatge, track in mid.play_tracks():
+	msg_in, msg_out = descodifica(missatge)
+	json_string = json.dumps({
+		"in": msg_in,
+		"out": msg_out
+	})
+	socket.sendto(json_string.encode(), multicast_group)
+\end{minted}
 
 
 \section{Resultats}
