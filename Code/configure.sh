@@ -6,7 +6,7 @@ usage() {
 	echo "-p  Configure python packages only"
 }
 
-packages="python3 fluidsynth alsa-utils"
+packages="python3 fluidsynth alsa-tools"
 
 pip_packs="mido python-telegram-bot"
 pip="pip3 install --user ${pip_packs}"
