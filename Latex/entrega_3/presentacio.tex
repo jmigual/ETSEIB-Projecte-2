@@ -18,21 +18,14 @@
 	\end{frame}
 }
 
-\AtBeginSubsection[]
-{
-	\begin{frame}{Contingut}
-		\tableofcontents[currentsection,currentsubsection]
-	\end{frame}
-}
-
 \title{Construcció d'una orquestra amb Raspberry Pi}
 \author{Arnau Canyadell Miquel \and Joan Marcè Igual}
+\date{2 de Juny de 2017}
 
 \begin{document}
 
 \frame{\titlepage}
 \section{Introducció}
-
 \begin{frame}{Descripció del projecte}
 	Crear amb Raspberry Pi una orquestra musical formada per un director i uns quants músics que interpreten el que els mana el director.
 	\begin{figure}
@@ -42,9 +35,28 @@
 	\end{figure}
 \end{frame}
 
+\section{Objectius}
+\subsection{Objectius a curt termini}
+\begin{frame}{Objectius a curt termini}
+	
+	\begin{itemize}
+		\item Aconseguir rebre la música d'un ordinador
+		\item Enviar la música a una Raspberry Pi
+		\item Reproduir la música en una Raspberry Pi
+	\end{itemize}
+\end{frame}
+
+\subsection{Objectius a llarg termini}
+\begin{frame}{Objectius a llarg termini}
+	\begin{itemize}
+		\item Programar un bot per a l'aplicació de missatgeria Telegram que reprodueixi amb l'orquestra de Raspberry Pis la música que se li enviï.
+		\item Enviar música del mòbil a l'ordinador.
+	\end{itemize}
+\end{frame}
+
 \section{Feina feta}
 \begin{frame}{Què hem fet fins ara?}
-	\begin{itemize}[<+->]
+	\begin{itemize}
 		\item Establiment dels objectius
 		\item Analitzat el codi del director
 		\item Programat el codi de l'intèrpret (músic)
@@ -73,24 +85,12 @@
 	\end{itemize}
 \end{frame}
 
-\section{Objectius}
-\begin{frame}{Feina a fer a partir d'ara}
-	\begin{itemize}[<+->]
-		\item Bot de Telegram que reprodueixi midi
-	\end{itemize}
-	\begin{figure}
-		\hfill
-		\includegraphics[width=0.2\textwidth]{images/telegram}
-		\hfill
-		\includegraphics[width=0.475\textwidth]{images/mobile}
-		\hfill
-	\end{figure}
-\end{frame}
-
 \section{Funcionament}
+\subsection{Multicast}
 \begin{frame}{Multicast}
 	\input{xarxa.tex}
 \end{frame}
+\subsection{Bucle reproducció}
 \begin{frame}[fragile]{Bucle de reproducció}
 	\begin{lstlisting}[
 			label={lst:code},
@@ -107,7 +107,7 @@
 	# les notes sonin quan toca
 	mid = DirectorMidiFile(file_path)
 	for missatge, track in mid.play_tracks():
-		msg_in, msg_out = descodifica(missatge)
+		msg_in, msg_out = descodifica(missatge, track)
 		# Genera string a enviar
 		json_string = json.dumps({
 		"in": msg_in,
@@ -119,8 +119,8 @@
 	\end{lstlisting}
 \end{frame}
 
-\section{Demo}
-\begin{frame}{Demo en directe}
+\section{Demostració}
+\begin{frame}{Demostració en directe}
 	\begin{figure}
 		\includegraphics[width=\linewidth]{images/orchestra}
 	\end{figure}

@@ -159,7 +159,7 @@ Una versió simplificada del codi és la que es pot veure al \autoref{lst:code}.
 	# les notes sonin quan toca
 	mid = DirectorMidiFile(file_path)
 	for missatge, track in mid.play_tracks():
-		msg_in, msg_out = descodifica(missatge)
+		msg_in, msg_out = descodifica(missatge, track)
 		# Genera string a enviar
 		json_string = json.dumps({
 		"in": msg_in,
