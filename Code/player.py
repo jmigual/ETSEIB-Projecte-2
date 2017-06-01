@@ -12,14 +12,13 @@ class SocketPlayer:
     multicast_group = '224.3.29.71'
     server_address = ('', 10000)
 
-    def __init__(self, velocity, track, sfid_path="/usr/share/sounds/sf2/FluidR3_GM.sf2"):
+    def __init__(self, track, sfid_path="/usr/share/sounds/sf2/FluidR3_GM.sf2"):
         self.sfid_path = sfid_path.encode("ascii")
         self.fs = fluidsynth.Synth()
         self.fs.start()
         self.fs.program_select(0, self.fs.sfload(self.sfid_path), 0, 0)
 
         self.logger = logging.getLogger()
-        self.velocity = velocity
 
         # Convert to list if it's not
         try:
@@ -49,22 +48,30 @@ class SocketPlayer:
 
     def __wait_and_process(self):
         # Blocks until data is received
-        data, address = self.sock.recvfrom(1024)
-        tracks, notes_in_all, notes_out_all = SocketPlayer.dissect_frame(data)
+        data, address = self.sock.recvfrom(2048)
+        tracks, notes_in_all, notes_out_all, prog_change, control_change = SocketPlayer.dissect_frame(data)
         self.logger.debug("Received %s bytes from %s", len(data), address[0])
         self.logger.debug(data)
 
         # Get the note form the data and play it
         for track in self.tracks:
+            prog = prog_change.get(str(track))
+            if prog is not None:
+                self.fs.program_change(track, prog)
+
+            ccs = control_change.get(str(track), {})
+            for cc in ccs:
+                self.fs.cc(track, cc["num"], cc["value"])
+
             notes_in = notes_in_all.get(str(track), [])
             for note in notes_in:
                 self.logger.info("Playing note: %s", note)
-                self.fs.noteon(0, note, self.velocity)
+                self.fs.noteon(track, note[0], note[1])
 
             notes_out = notes_out_all.get(str(track), [])
             for note in notes_out:
                 self.logger.debug("Stopping note: %s", note)
-                self.fs.noteoff(0, note)
+                self.fs.noteoff(track, note)
 
         self.logger.debug("Sending acknowledgment to %s", address)
         self.sock.sendto(b'ack', address)
@@ -72,4 +79,4 @@ class SocketPlayer:
     @staticmethod
     def dissect_frame(frame):
         msg = json.loads(frame.decode())
-        return msg["tracks"], msg["in"], msg["out"]
+        return msg["tracks"], msg["in"], msg["out"], msg["pc"], msg["cc"]

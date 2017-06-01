@@ -56,12 +56,17 @@ class Director:
         logging.info("Playing...")
         msg_out = {}
         msg_in = {}
+        prog_change = {}
+        control_change = {}
 
         for msg, track in self.mid.play_tracks():
+            #print(msg, track)
             if msg.time > 0:
                 json_string = json.dumps({
                     "in": msg_in,
                     "out": msg_out,
+                    "pc": prog_change,
+                    "cc": control_change,
                     "tracks": self.tracks
                 })
                 logging.debug("data_sent:" + json_string)
@@ -69,16 +74,28 @@ class Director:
 
                 msg_out = {}
                 msg_in = {}
+                prog_change = {}
+                control_change = {}
 
             if msg.type == 'note_on':
                 messages = msg_in.get(track, [])
-                messages.append(msg.note)
+                messages.append([msg.note, msg.velocity])
                 msg_in[track] = messages
             elif msg.type == 'note_off':
                 messages = msg_out.get(track, [])
                 messages.append(msg.note)
                 msg_out[track] = messages
+            elif msg.type == 'program_change':
+                prog_change[track] = msg.program
+            elif msg.type == 'control_change':
+                messages = control_change.get(track, [])
+                messages.append({
+                    "num": msg.control,
+                    "value": msg.value
+                })
+                control_change[track] = messages
             else:
+                print(msg)
                 continue
 
         json_string = json.dumps({
