@@ -1,19 +1,23 @@
 \documentclass[a4paper]{paper}
 
 \usepackage[catalan]{babel}
+\usepackage{fontspec}
+\usepackage[margin=2cm]{geometry}
+
+\usepackage{graphicx}
+\usepackage{float}
+
+\usepackage{listings}
+
+\usepackage[colorlinks=true, allcolors=blue, linkcolor=black]{hyperref}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+
 \usepackage[
 backend=biber,
 citestyle=numeric  
 ]{biblatex}
-\usepackage{fontspec}
-\usepackage[margin=2cm]{geometry}
-\usepackage{graphicx}
-\usepackage{titlesec}
-\usepackage{url}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{tikz}
-\usepackage{float}
 
 \usetikzlibrary{positioning}
 
@@ -125,13 +129,13 @@ Telegram\cite{telegram} és una aplicació de missatgeria per a mòbils de diver
 
 El bot s'anomena \emph{Raspberry Pi Orchestra} i té l'identificador \texttt{@RPOrchestraBot}. El seu codi per a funcionar es troba al repositori del treball a la carpeta \texttt{Code} (\texttt{bot.py}) i es pot executar en qualsevol ordinador que tingui intèrpret de Python3 i connexió a Internet.
 
-Cada vegada que un usuari envia un arxiu al bot, aquest comprova que sigui un arxiu de format MIDI. Si ho és, l'envia al director perquè el toqui amb l'orquestra de Raspberry Pis. Actualment la funció que executa aquest codi és síncrona i no acaba fins que l'orquestra de tocar. Això significa que el bot no reacciona a cap missatge que li sigui enviat mentre l'orquestra està tocant, i per tant si un usuari envia un nou arxiu MIDI aquest no serà reproduït fins que la peça acabi. En la figura \ref{fig:screenshot_bot} es pot veure un exemple de com funciona.
+Cada vegada que un usuari envia un arxiu al bot, aquest comprova que sigui un arxiu de format MIDI. Si ho és, l'envia al director perquè el toqui amb l'orquestra de Raspberry Pis. Actualment la funció que executa aquest codi és síncrona i no acaba fins que l'orquestra de tocar. Això significa que el bot no reacciona a cap missatge que li sigui enviat mentre l'orquestra està tocant, i per tant si un usuari envia un nou arxiu MIDI aquest no serà reproduït fins que la peça acabi. A la \autoref{fig:screenshot_bot} es pot veure un exemple de com funciona.
 
 \begin{figure}
-	\label{fig:screenshot_bot}
 	\centering
 	\includegraphics[width=0.3\textwidth]{images/screenshot_bot.png}
 	\caption{Exemple d'interacció amb el \emph{Raspberry Pi Orchestra}. El bot no respon fins que l'orquestra no acaba de tocar la peça. Tambés es pot observar que no accepta l'arxiu que no és del tipus adequat.}
+	\label{fig:screenshot_bot}
 \end{figure}
 
 El bot s'ha creat a partir d'una plantilla pública de codi lliure anomenada Python Telegram Bot\cite{python-telegram-bot}. Aquesta plantilla ofereix moltes classes per a realitzar les operacions de connexió amb els servidors de Telegram.
@@ -141,8 +145,10 @@ Per a la reproducció dels arxius MIDI s'ha usat la llibreria Mido\cite{mido}. Q
 
 Així doncs, un cop la connexió amb el bot de Telegram està finalitzada és tant senzill com passar el camí fins a l'arxiu que es vulgui reproduir i el nou director s'encarrega de demanar-li a la llibreria la informació necessària.
 
-Una versió simplificada del codi és la següent:
+Una versió simplificada del codi és la que es pot veure al \autoref{lst:code}.
 \begin{lstlisting}[
+		float,
+		label={lst:code},
 		style=mypython, 
 		xleftmargin=.1\textwidth, 
 		xrightmargin=.1\textwidth,
