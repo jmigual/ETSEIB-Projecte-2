@@ -104,10 +104,15 @@ Un cop tot funcionava es modificar el director. Es van crear les classes Directo
 \subsubsection{Implementació del bot de Telegram i reproducció d'arxius MIDI (sessions 10 a 14)}
 Finalment es va trobar una manera de canviar la sortida d'àudio de les Raspberry Pis i es va crear un script per canviar-lo de forma simplificada. Després d'això es va treballar en l'objectiu de crear un bot de Telegram que reproduís la música que se li envia, i així complir els dos objectius a llarg termini. Per a dur a terme aquest objectius es va para\l.lelitzar la feina en la creació del bot i en la reproducció d'arxius MIDI.
 
-\subsubsection{Creació del bot de Telegram}
+\section{Funcionament de l'orquestra}
+
+\subsection{Comunicació entre director i intèrprets}
 
 
-\subsubsection{Reproducció d'arxius MIDI}
+\subsection{Bot de Telegram}
+
+
+\subsection{Reproducció d'arxius MIDI}
 Per a la reproducció dels arxius MIDI s'ha usat la llibreria Mido\cite{mido}. Que permet la reproducció en temps real d'aquest tipus d'arxius. Aquesta llibreria s'ha modificat lleugerament per poder obtenir tots els canals del MIDI mentre es reprodueix de manera que pot ser configurat amb el sistema de múltiples Raspberry Pi per reproduir que s'usa en aquest projecte.
 
 Així doncs, un cop la connexió amb el bot de Telegram està finalitzada és tant senzill com passar el camí fins a l'arxiu que es vulgui reproduir i el nou director s'encarrega de demanar-li a la llibreria la informació necessària.
