@@ -11,6 +11,9 @@ citestyle=numeric
 \usepackage{titlesec}
 \usepackage{url}
 \usepackage{listings}
+\usepackage{xcolor}
+
+\input{python.tex}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
@@ -115,15 +118,19 @@ Per a la reproducció dels arxius MIDI s'ha usat la llibreria Mido\cite{mido}. Q
 Així doncs, un cop la connexió amb el bot de Telegram està finalitzada és tant senzill com passar el camí fins a l'arxiu que es vulgui reproduir i el nou director s'encarrega de demanar-li a la llibreria la informació necessària.
 
 El codi per reproduir queda així de la següent manera:
-\begin{lstlisting}
-# file_path conté el camí fins a l'arxiu
+\begin{lstlisting}[style=mypython]
+# file_path: conté el camí fins a l'arxiu
+# multicast_group: conté la ip al grup de multicast
 mid = DirectorMidiFile(file_path)
 for missatge, track in mid.play_tracks():
 	msg_in, msg_out = descodifica(missatge)
+	# Genera string a enviar
 	json_string = json.dumps({
 		"in": msg_in,
 		"out": msg_out
 	})
+	
+	# Enviar dades al multicast
 	socket.sendto(json_string.encode(), multicast_group)
 \end{lstlisting}
 
