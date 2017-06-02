@@ -18,6 +18,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from logger import *
 import urllib.request as req
 import director
+import argparse
 
 
 dire = director.Director()
@@ -60,6 +61,14 @@ def error(bot, update, error):
 
 def main():
     set_default_logger("bot.log")
+
+    parser = argparse.ArgumentParser(description="Start bot to play music with Pi Orchestra")
+    parser.add_argument("-d", "--debug", action="store_true", help="Print debug information")
+    args = parser.parse_args()
+
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Starting in DEBUG mode")
 
     # Create the EventHandler and pass it your bot's token.
     updater = Updater("321792127:AAHE9cK06THBoeJFJav07ZwAYKFNKAmWZ9w")
